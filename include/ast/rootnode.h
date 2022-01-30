@@ -1,11 +1,11 @@
 /**
  * @file rootnode.h
- * @author your name (you@domain.com)
+ * @author MCMocoder (mcmocoder@mocoder.xyz)
  * @brief
  * @version 0.1
  * @date 2022-01-16
  *
- * @copyright Copyright (c) 2022
+ * @copyright Copyright (c) 2022 Mocoder Studio
  *
  */
 
@@ -42,14 +42,22 @@ public:
   }
 
   virtual std::string GenJS() override {
+    #ifdef DEBUG_MODE
     std::string result = "function run() {\n";
+    #else 
+    std::string result = "function run() {";
+    #endif
     for(std::string varname:declvars_) {
+      #ifdef DEBUG_MODE
       result+="var "+varname+"=0.0;\n";
+      #else
+      result+="var "+varname+"=0.0;";
+      #endif
     }
     for (ASTNode *stmt : stmts_) {
       result+=stmt->GenJS();
     }
-    result += "}";
+    result += "}\n";
     return result;
   }
 };

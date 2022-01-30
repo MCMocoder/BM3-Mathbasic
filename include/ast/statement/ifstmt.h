@@ -1,11 +1,11 @@
 /**
  * @file ifstmt.h
- * @author your name (you@domain.com)
+ * @author MCMocoder (mcmocoder@mocoder.xyz)
  * @brief 
  * @version 0.1
  * @date 2022-01-22
  * 
- * @copyright Copyright (c) 2022
+ * @copyright Copyright (c) 2022 Mocoder Studio
  * 
  */
 
@@ -55,9 +55,17 @@ public:
     std::string result;
     result+="if(";
     result+=cond_->GenJS();
+    #ifdef DEBUG_MODE
     result+="){\n";
+    #else
+    result+="){";
+    #endif
     for(std::string varname:declvars_) {
+      #ifdef DEBUG_MODE
       result+="var "+varname+"=0.0;\n";
+      #else
+      result+="var "+varname+"=0.0;";
+      #endif
     }
     for(ASTNode* stmt:stmts_) {
       result+=stmt->GenJS();
@@ -66,7 +74,11 @@ public:
       result+="}";
       result+=else_->GenJS();
     } else {
+      #ifdef DEBUG_MODE
       result+="}\n";
+      #else
+      result+="}";
+      #endif
     }
     return result;
   }

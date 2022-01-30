@@ -1,16 +1,18 @@
 /**
  * @file astnode.h
- * @author your name (you@domain.com)
+ * @author MCMocoder (mcmocoder@mocoder.xyz)
  * @brief
  * @version 0.1
  * @date 2022-01-16
  *
- * @copyright Copyright (c) 2022
+ * @copyright Copyright (c) 2022 Mocoder Studio
  *
  */
 
 #ifndef ASTNODE_H_
 #define ASTNODE_H_
+
+//#define DEBUG_MODE
 
 #include <memory>
 #include <string>

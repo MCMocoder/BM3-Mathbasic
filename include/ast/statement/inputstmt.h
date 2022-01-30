@@ -1,11 +1,11 @@
 /**
  * @file inputstmt.h
- * @author your name (you@domain.com)
+ * @author MCMocoder (mcmocoder@mocoder.xyz)
  * @brief 
  * @version 0.1
  * @date 2022-01-22
  * 
- * @copyright Copyright (c) 2022
+ * @copyright Copyright (c) 2022 Mocoder Studio
  * 
  */
 
@@ -36,7 +36,11 @@ public:
     std::string result;
     for(ASTNode* node:vars_->ids_) {
       result+=node->GenJS();
+      #ifdef DEBUG_MODE
       result+="=outside.input();\n";
+      #else
+      result+="=outside.input();";
+      #endif
     }
     return result;
   }

@@ -1,11 +1,11 @@
 /**
  * @file doloopstmt.h
- * @author your name (you@domain.com)
+ * @author MCMocoder (mcmocoder@mocoder.xyz)
  * @brief 
  * @version 0.1
  * @date 2022-01-22
  * 
- * @copyright Copyright (c) 2022
+ * @copyright Copyright (c) 2022 Mocoder Studio
  * 
  */
 
@@ -48,16 +48,28 @@ public:
   }
   virtual std::string GenJS() override {
     std::string result;
+    #ifdef DEBUG_MODE
     result+="do{\n";
+    #else
+    result+="do{";
+    #endif
     for(std::string varname:declvars_) {
+      #ifdef DEBUG_MODE
       result+="var "+varname+"=0.0;\n";
+      #else
+      result+="var "+varname+"=0.0;";
+      #endif
     }
     for(ASTNode* stmt:stmts_) {
       result+=stmt->GenJS();
     }
     result+="}while(";
     result+=cond_->GenJS();
+    #ifdef DEBUG_MODE
     result+=");\n";
+    #else
+    result+=");";
+    #endif
     return result;
   }
 

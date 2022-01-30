@@ -1,11 +1,11 @@
 /**
  * @file assignstmt.h
- * @author your name (you@domain.com)
+ * @author MCMocoder (mcmocoder@mocoder.xyz)
  * @brief
  * @version 0.1
  * @date 2022-01-22
  *
- * @copyright Copyright (c) 2022
+ * @copyright Copyright (c) 2022 Mocoder Studio
  *
  */
 
@@ -42,7 +42,11 @@ public:
     result += var_->GenJS();
     result += "=";
     result += expr_->GenJS();
+    #ifdef DEBUG_MODE
     result += ";\n";
+    #else
+    result += ";";
+    #endif
     return result;
   }
 };
