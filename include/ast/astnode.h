@@ -21,6 +21,10 @@
 #include <iostream>
 
 namespace mocoder {
+
+template<typename T>
+using Ptr=std::shared_ptr<T>;
+
 class ASTNode {
 public:
 

@@ -20,13 +20,9 @@
 namespace mocoder {
 class AssignStmt : public ASTNode {
 public:
-  Identifier *var_;
-  ASTNode *expr_;
-  AssignStmt(Identifier *var, ASTNode *expr) : var_(var), expr_(expr) {}
-  virtual ~AssignStmt() {
-    delete var_;
-    delete expr_;
-  }
+  Ptr<Identifier> var_;
+  Ptr<ASTNode> expr_;
+  AssignStmt(Ptr<Identifier> var, Ptr<ASTNode> expr) : var_(var), expr_(expr) {}
   virtual void PrintTree(int depth) override {
     for (int i = 0; i < depth; ++i) {
       std::cout << " ";

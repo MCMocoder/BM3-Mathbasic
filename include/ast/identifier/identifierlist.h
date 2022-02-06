@@ -20,14 +20,9 @@
 namespace mocoder {
 class IdentifierList : public ASTNode {
 public:
-  std::list<Identifier*> ids_;
+  std::list<Ptr<Identifier>> ids_;
   IdentifierList(){}
-  virtual ~IdentifierList() {
-    for(Identifier* id:ids_) {
-      delete id;
-    }
-  }
-  void AddId(Identifier* id) {
+  void AddId(Ptr<Identifier> id) {
     ids_.push_back(id);
   }
   virtual void PrintTree(int depth) override {
@@ -36,7 +31,7 @@ public:
     }
     std::cout<<depth<<":"<<"IdentifierList";
     std::cout<<std::endl;
-    for(ASTNode* stmt:ids_) {
+    for(Ptr<ASTNode>  stmt:ids_) {
       stmt->PrintTree(depth+1);
     }
   }

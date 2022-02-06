@@ -20,14 +20,11 @@ namespace mocoder {
 class Valexpr : public ASTNode {
 public:
   int oper_;
-  ASTNode *lchild_;
-  ASTNode *rchild_;
-  Valexpr(int oper, ASTNode *lchild, ASTNode *rchild)
+  Ptr<ASTNode> lchild_;
+  Ptr<ASTNode> rchild_;
+  Valexpr(int oper, Ptr<ASTNode> lchild, Ptr<ASTNode> rchild)
       : oper_(oper), lchild_(lchild), rchild_(rchild) {}
-  virtual ~Valexpr() {
-    delete lchild_;
-    delete rchild_;
-  }
+
 
   virtual void PrintTree(int depth) override {
     for (int i = 0; i < depth; ++i) {

@@ -20,16 +20,10 @@
 namespace mocoder {
 class WhileStmt : public ASTNode {
 public:
-  Condexpr* cond_;
-  std::list<ASTNode*> stmts_;
+  Ptr<Condexpr> cond_;
+  std::list<Ptr<ASTNode> > stmts_;
   std::unordered_set<std::string> declvars_;
-  WhileStmt(Condexpr* cond,std::list<ASTNode*> &stmts):cond_(cond),stmts_(stmts) {
-  }
-  virtual ~WhileStmt() {
-    delete cond_;
-    for(ASTNode* expr:stmts_) {
-      delete expr;
-    }
+  WhileStmt(Ptr<Condexpr> cond,std::list<Ptr<ASTNode> > &stmts):cond_(cond),stmts_(stmts) {
   }
   virtual void PrintTree(int depth) override {
     for(int i=0;i<depth;++i) {
@@ -42,7 +36,7 @@ public:
     std::cout<<")";
     std::cout<<std::endl;
     cond_->PrintTree(depth+1);
-    for(ASTNode* stmt:stmts_) {
+    for(Ptr<ASTNode>  stmt:stmts_) {
       stmt->PrintTree(depth+1);
     }
   }
@@ -62,7 +56,7 @@ public:
       result+="var "+varname+"=0.0;";
       #endif
     }
-    for(ASTNode* stmt:stmts_) {
+    for(Ptr<ASTNode>  stmt:stmts_) {
       result+=stmt->GenJS();
     }
     #ifdef DEBUG_MODE

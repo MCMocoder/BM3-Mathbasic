@@ -23,18 +23,12 @@
 namespace mocoder {
 class IfStmt : public ASTNode {
 public:
-  Condexpr* cond_;
-  std::list<ASTNode*> stmts_;
-  ElseStmt* else_;
+  Ptr<Condexpr> cond_;
+  std::list<Ptr<ASTNode> > stmts_;
+  Ptr<ElseStmt> else_;
   std::unordered_set<std::string> declvars_;
-  IfStmt(Condexpr* cond,std::list<ASTNode*> &stmts):cond_(cond),stmts_(stmts){
+  IfStmt(Ptr<Condexpr> cond,std::list<Ptr<ASTNode> > &stmts):cond_(cond),stmts_(stmts){
     else_=nullptr;
-  }
-  virtual ~IfStmt() {
-    delete cond_;
-    for(ASTNode *stmt:stmts_) {
-      delete stmt;
-    }
   }
   virtual void PrintTree(int depth) override {
     for(int i=0;i<depth;++i) {
@@ -47,7 +41,7 @@ public:
     std::cout<<")";
     std::cout<<std::endl;
     cond_->PrintTree(depth+1);
-    for(ASTNode* stmt:stmts_) {
+    for(Ptr<ASTNode>  stmt:stmts_) {
       stmt->PrintTree(depth+1);
     }
   }
@@ -67,7 +61,7 @@ public:
       result+="var "+varname+"=0.0;";
       #endif
     }
-    for(ASTNode* stmt:stmts_) {
+    for(Ptr<ASTNode>  stmt:stmts_) {
       result+=stmt->GenJS();
     }
     if(else_!=nullptr) {

@@ -11,6 +11,7 @@
 
 #include "parse/parse.h"
 #include "ast/astnode.h"
+#include "ast/expression/valexpr.h"
 #include "ast/rootnode.h"
 #include "ast/statement/whilestmt.h"
 #include <list>
@@ -23,8 +24,8 @@ namespace mocoder {
 using TokenList = Lexer::TokenList;
 using Token = Lexer::Token;
 
-Identifier *Parser::ParseIdentifier() {
-  Identifier *result = new Identifier(curtok_.second);
+Ptr<Identifier> Parser::ParseIdentifier() {
+  Ptr<Identifier> result(new Identifier(curtok_.second));
   ConsumeToken();
 
   if (!Sema::SearchVar(result->name_, this)) {
@@ -34,25 +35,24 @@ Identifier *Parser::ParseIdentifier() {
   return result;
 }
 
-Number *Parser::ParseNumber() {
-  Number *result = new Number(std::stod(curtok_.second));
+Ptr<Number> Parser::ParseNumber() {
+  Ptr<Number> result(new Number(std::stod(curtok_.second)));
   ConsumeToken();
   return result;
 }
 
-ASTNode *Parser::ParseParenExpr() {
+Ptr<ASTNode> Parser::ParseParenExpr() {
   ConsumeToken(); // LBRACKET
-  ASTNode *result = ParseAddExprTop();
+  Ptr<ASTNode> result = ParseAddExprTop();
   if (curtok_.first == Lexer::LBRACKET) {
     ConsumeToken(); // RBRACKET
     return result;
   } else {
-    delete result;
     std::__throw_logic_error("Expected ')'");
   }
 }
 
-ASTNode *Parser::ParseIdExpr() {
+Ptr<ASTNode> Parser::ParseIdExpr() {
   std::string id = curtok_.second;
   ConsumeToken(); // Identifier
   if (curtok_.first == Lexer::LBRACKET) {
@@ -63,25 +63,22 @@ ASTNode *Parser::ParseIdExpr() {
       std::__throw_logic_error("Use of undeclared function");
     }
 
-    CallFuncExpr *result = new CallFuncExpr(id, ParseValExprList());
+    Ptr<CallFuncExpr> result(new CallFuncExpr(id, ParseValExprList()));
 
     if (result->params_->exprs_.size() != funcmap.find(id)->second) {
-      delete result;
       std::__throw_logic_error("Unexpected Param Number");
     }
 
     if (curtok_.first != Lexer::RBRACKET) {
-      delete result;
       std::__throw_logic_error("Expected ')'");
     }
     ConsumeToken(); // RBRACKET
     return result;
   } else {
     // Variable(Identifier)
-    Identifier *result = new Identifier(id);
+    Ptr<Identifier> result(new Identifier(id));
 
     if (!Sema::SearchVar(result->name_, this)) {
-      delete result;
       std::__throw_logic_error("Use of undeclared variable");
     }
 
@@ -89,8 +86,8 @@ ASTNode *Parser::ParseIdExpr() {
   }
 }
 
-ValexprList *Parser::ParseValExprList() {
-  ValexprList *result = new ValexprList();
+Ptr<ValexprList> Parser::ParseValExprList() {
+  Ptr<ValexprList> result(new ValexprList());
   while (true) {
     result->AddExpr(ParseAddExprTop());
     if (curtok_.first != Lexer::COMMA) {
@@ -98,16 +95,15 @@ ValexprList *Parser::ParseValExprList() {
     }
     ConsumeToken(); // COMMA
     if (eof_) {
-      delete result;
       std::__throw_logic_error("Unexpected EOF");
     }
   }
 }
 
-IdentifierList *Parser::ParseIdentifierList() {
-  IdentifierList *result = new IdentifierList();
+Ptr<IdentifierList> Parser::ParseIdentifierList() {
+  Ptr<IdentifierList> result(new IdentifierList());
   while (true) {
-    Identifier *curid = new Identifier(curtok_.second);
+    Ptr<Identifier> curid(new Identifier(curtok_.second));
     ConsumeToken(); // IDENTIFIER
 
     if (!Sema::SearchVar(curid->name_, this)) {
@@ -120,14 +116,12 @@ IdentifierList *Parser::ParseIdentifierList() {
     }
     ConsumeToken(); // COMMA
     if (eof_) {
-      delete result;
-      delete curid;
       std::__throw_logic_error("Unexpected EOF");
     }
   }
 }
 
-ASTNode *Parser::ParsePrimaryExpr() {
+Ptr<ASTNode> Parser::ParsePrimaryExpr() {
   switch (curtok_.first) {
   case Lexer::IDENTIFIER:
     return ParseIdExpr();
@@ -140,112 +134,108 @@ ASTNode *Parser::ParsePrimaryExpr() {
   }
 }
 
-ASTNode *Parser::ParseAddExprTop() {
+Ptr<ASTNode> Parser::ParseAddExprTop() {
   if (curtok_.first == Lexer::ADD || curtok_.first == Lexer::SUB) {
     return ParseAddExpr(nullptr);
   }
-  ASTNode *lchild = ParseMulExpr();
+  Ptr<ASTNode> lchild = ParseMulExpr();
   return ParseAddExpr(lchild);
 }
 
-ASTNode *Parser::ParseAddExpr(ASTNode *lchild) {
+Ptr<ASTNode> Parser::ParseAddExpr(Ptr<ASTNode> lchild) {
   while (true) {
     if (!(curtok_.first == Lexer::ADD || curtok_.first == Lexer::SUB)) {
       return lchild;
     }
     Token oper = curtok_;
     ConsumeToken(); // ADD or SUB
-    ASTNode *rchild = ParseMulExpr();
-    lchild = new Valexpr(oper.first, lchild, rchild);
+    Ptr<ASTNode> rchild = ParseMulExpr();
+    lchild = std::shared_ptr<Valexpr>(new Valexpr(oper.first, lchild, rchild));
   }
 }
 
-ASTNode *Parser::ParseMulExpr() {
-  ASTNode *lchild = ParsePowExpr();
+Ptr<ASTNode> Parser::ParseMulExpr() {
+  Ptr<ASTNode> lchild = ParsePowExpr();
   while (true) {
     if (!(curtok_.first == Lexer::MUL || curtok_.first == Lexer::DIV)) {
       return lchild;
     }
     Token oper = curtok_;
     ConsumeToken(); // MUL or DIV
-    ASTNode *rchild = ParsePowExpr();
-    lchild = new Valexpr(oper.first, lchild, rchild);
+    Ptr<ASTNode> rchild = ParsePowExpr();
+    lchild = std::shared_ptr<Valexpr>(new Valexpr(oper.first, lchild, rchild));
   }
 }
 
-ASTNode *Parser::ParsePowExpr() {
-  ASTNode *lchild = ParsePrimaryExpr();
+Ptr<ASTNode> Parser::ParsePowExpr() {
+  Ptr<ASTNode> lchild = ParsePrimaryExpr();
   if (curtok_.first != Lexer::POW) {
     return lchild;
   }
   ConsumeToken(); // POW
-  ASTNode *rchild = ParsePowExpr();
-  ASTNode *result = new Valexpr(Lexer::POW, lchild, rchild);
+  Ptr<ASTNode> rchild = ParsePowExpr();
+  Ptr<ASTNode> result(new Valexpr(Lexer::POW, lchild, rchild));
   return result;
 }
 
-Condexpr *Parser::ParseCondExpr() {
-  ASTNode *lchild = ParseAddExprTop();
+Ptr<Condexpr> Parser::ParseCondExpr() {
+  Ptr<ASTNode> lchild = ParseAddExprTop();
   if (!(curtok_.first >= Lexer::GREATEREQUAL &&
         curtok_.first <= Lexer::EQUAL)) {
-    delete lchild;
     std::__throw_logic_error("Expected Relop");
   }
   int relop = curtok_.first;
   ConsumeToken(); // (Relop)
-  ASTNode *rchild = ParseAddExprTop();
-  Condexpr *result = new Condexpr(relop, lchild, rchild);
+  Ptr<ASTNode> rchild = ParseAddExprTop();
+  Ptr<Condexpr> result(new Condexpr(relop, lchild, rchild));
   return result;
 }
 
-AssignStmt *Parser::ParseAssignStmt() {
-  Identifier *var = ParseIdentifier();
+Ptr<AssignStmt> Parser::ParseAssignStmt() {
+  Ptr<Identifier> var = ParseIdentifier();
   if (curtok_.first != Lexer::ASSIGN) {
-    delete var;
     std::__throw_logic_error("Expected ASSIGN");
   }
   ConsumeToken(); // ASSIGN
-  ASTNode *expr = ParseAddExprTop();
-  AssignStmt *result = new AssignStmt(var, expr);
+  Ptr<ASTNode> expr = ParseAddExprTop();
+  Ptr<AssignStmt> result(new AssignStmt(var, expr));
   return result;
 }
 
-InputStmt *Parser::ParseInputStmt() {
+Ptr<InputStmt> Parser::ParseInputStmt() {
   ConsumeToken(); // INPUT
-  IdentifierList *vars = ParseIdentifierList();
-  return new InputStmt(vars);
+  Ptr<IdentifierList> vars = ParseIdentifierList();
+  return Ptr<InputStmt>(new InputStmt(vars));
 }
 
-PrintStmt *Parser::ParsePrintStmt() {
+Ptr<PrintStmt> Parser::ParsePrintStmt() {
   ConsumeToken(); // PRINT
-  ValexprList *list = ParseValExprList();
-  return new PrintStmt(list);
+  Ptr<ValexprList> list = ParseValExprList();
+  return Ptr<PrintStmt>(new PrintStmt(list));
 }
 
-IfStmt *Parser::ParseIfStmt() {
+Ptr<IfStmt> Parser::ParseIfStmt() {
   ConsumeToken(); // IF
-  Condexpr *cond = ParseCondExpr();
+  Ptr<Condexpr> cond = ParseCondExpr();
   if (curtok_.second != "THEN") {
-    delete cond;
     std::__throw_logic_error("Expected THEN");
   }
   ConsumeToken(); // THEN
   if (curtok_.first != Lexer::NEWLINE) {
-    delete cond;
     std::__throw_logic_error("Expected NEWLINE");
   }
   ConsumeToken(); // NEWLINE
   ++linenum_;
   EnterScope();
-  std::list<ASTNode *> stmts = ParseTop();
-  IfStmt *result = new IfStmt(cond, stmts);
+  std::list<Ptr<ASTNode> > stmts = ParseTop();
+  Ptr<IfStmt> result(new IfStmt(cond, stmts));
   result->declvars_ = curscope_.front();
   if (curtok_.second == "ELSE") {
     ConsumeToken(); // ELSE
     ExitScope();
     EnterScope();
-    std::list<ASTNode *> elsestmts = ParseTop();
-    ElseStmt *elseres = new ElseStmt(elsestmts);
+    std::list<Ptr<ASTNode> > elsestmts = ParseTop();
+    Ptr<ElseStmt> elseres(new ElseStmt(elsestmts));
     elseres->declvars_ = curscope_.front();
     result->else_=elseres;
   }
@@ -253,20 +243,18 @@ IfStmt *Parser::ParseIfStmt() {
   return result;
 }
 
-WhileStmt *Parser::ParseWhileStmt() {
+Ptr<WhileStmt> Parser::ParseWhileStmt() {
   ConsumeToken(); // WHILE
-  Condexpr *cond = ParseCondExpr();
+  Ptr<Condexpr> cond = ParseCondExpr();
   if (curtok_.first != Lexer::NEWLINE) {
-    delete cond;
     std::__throw_logic_error("Expected NEWLINE");
   }
   ConsumeToken(); // NEWLINE
   ++linenum_;
   EnterScope();
-  std::list<ASTNode *> stmts = ParseTop();
-  WhileStmt *result = new WhileStmt(cond, stmts);
+  std::list<Ptr<ASTNode> > stmts = ParseTop();
+  Ptr<WhileStmt> result(new WhileStmt(cond, stmts));
   if (curtok_.second != "WEND") {
-    delete result;
     std::__throw_logic_error("Expected WEND");
   }
   ConsumeToken(); // WEND
@@ -275,7 +263,7 @@ WhileStmt *Parser::ParseWhileStmt() {
   return result;
 }
 
-DoLoopStmt *Parser::ParseDoLoopStmt() {
+Ptr<DoLoopStmt> Parser::ParseDoLoopStmt() {
   ConsumeToken(); // DO
   if (curtok_.first != Lexer::NEWLINE) {
     std::__throw_logic_error("Expected NEWLINE");
@@ -283,20 +271,20 @@ DoLoopStmt *Parser::ParseDoLoopStmt() {
   ConsumeToken(); // NEWLINE
   ++linenum_;
   EnterScope();
-  std::list<ASTNode *> stmts = ParseTop();
+  std::list<Ptr<ASTNode> > stmts = ParseTop();
   if (curtok_.second != "LOOPUNTIL") {
     std::__throw_logic_error("Expected LOOP UNTIL");
   }
   ConsumeToken(); // DOLOOP
-  Condexpr *cond = ParseCondExpr();
-  DoLoopStmt *result = new DoLoopStmt(cond, stmts);
+  Ptr<Condexpr> cond = ParseCondExpr();
+  Ptr<DoLoopStmt> result(new DoLoopStmt(cond, stmts));
   result->declvars_ = curscope_.front();
   ExitScope();
   return result;
 }
 
-std::list<ASTNode *> Parser::ParseTop() {
-  std::list<ASTNode *> result;
+std::list<Ptr<ASTNode> > Parser::ParseTop() {
+  std::list<Ptr<ASTNode> > result;
   while (!eof_ || curtok_.second == "END"||curtok_.first==Lexer::NEWLINE) {
     try {
       if (curtok_.second == "IF") {
@@ -342,7 +330,7 @@ std::list<ASTNode *> Parser::ParseTop() {
 }
 
 std::shared_ptr<RootNode> Parser::Parse() {
-  std::list<ASTNode *> stmts = ParseTop();
+  std::list<Ptr<ASTNode> > stmts = ParseTop();
   std::shared_ptr<RootNode> node(new RootNode(stmts));
   node->declvars_ = curscope_.front();
   return node;

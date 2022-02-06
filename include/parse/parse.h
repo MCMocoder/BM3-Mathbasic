@@ -13,6 +13,8 @@
 #define PARSE_H_
 
 #include "ast/nodes.h"
+#include "ast/statement/doloopstmt.h"
+#include "ast/statement/ifstmt.h"
 #include "lex/lexer.h"
 #include <list>
 #include <map>
@@ -58,25 +60,25 @@ public:
     curscope_.front().insert(varname);
   }
 
-  Identifier* ParseIdentifier();
-  Number* ParseNumber();
-  ASTNode* ParseParenExpr();
-  ASTNode* ParseIdExpr();
-  ValexprList* ParseValExprList();
-  IdentifierList* ParseIdentifierList();
-  ASTNode* ParsePrimaryExpr();
-  ASTNode* ParseAddExprTop();
-  ASTNode* ParsePowExpr();
-  ASTNode* ParseMulExpr();
-  ASTNode* ParseAddExpr(ASTNode* lchild);
-  Condexpr* ParseCondExpr();
-  AssignStmt* ParseAssignStmt();
-  InputStmt* ParseInputStmt();
-  PrintStmt* ParsePrintStmt();
-  IfStmt* ParseIfStmt();
-  WhileStmt* ParseWhileStmt();
-  DoLoopStmt* ParseDoLoopStmt();
-  std::list<ASTNode*> ParseTop(); 
+  Ptr<Identifier> ParseIdentifier();
+  Ptr<Number> ParseNumber();
+  Ptr<ASTNode>  ParseParenExpr();
+  Ptr<ASTNode>  ParseIdExpr();
+  Ptr<ValexprList> ParseValExprList();
+  Ptr<IdentifierList> ParseIdentifierList();
+  Ptr<ASTNode>  ParsePrimaryExpr();
+  Ptr<ASTNode>  ParseAddExprTop();
+  Ptr<ASTNode>  ParsePowExpr();
+  Ptr<ASTNode>  ParseMulExpr();
+  Ptr<ASTNode>  ParseAddExpr(Ptr<ASTNode>  lchild);
+  Ptr<Condexpr> ParseCondExpr();
+  Ptr<AssignStmt> ParseAssignStmt();
+  Ptr<InputStmt> ParseInputStmt();
+  Ptr<PrintStmt> ParsePrintStmt();
+  Ptr<IfStmt> ParseIfStmt();
+  Ptr<WhileStmt> ParseWhileStmt();
+  Ptr<DoLoopStmt> ParseDoLoopStmt();
+  std::list<Ptr<ASTNode> > ParseTop(); 
   std::shared_ptr<RootNode> Parse();
 
 

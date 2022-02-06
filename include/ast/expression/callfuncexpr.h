@@ -20,10 +20,9 @@ namespace mocoder {
 class CallFuncExpr : public ASTNode {
 public:
   std::string name_;
-  ValexprList *params_;
-  CallFuncExpr(std::string &name, ValexprList *params)
+  Ptr<ValexprList> params_;
+  CallFuncExpr(std::string &name, Ptr<ValexprList> params)
       : name_(name), params_(params) {}
-  virtual ~CallFuncExpr() { delete params_; }
   virtual void PrintTree(int depth) override {
     for (int i = 0; i < depth; ++i) {
       std::cout << " ";

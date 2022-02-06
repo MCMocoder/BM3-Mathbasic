@@ -22,14 +22,9 @@
 namespace mocoder {
 class ElseStmt : public ASTNode {
 public:
-  std::list<ASTNode*> stmts_;
+  std::list<Ptr<ASTNode> > stmts_;
   std::unordered_set<std::string> declvars_;
-  ElseStmt(std::list<ASTNode*> &stmts):stmts_(std::move(stmts)){
-  }
-  virtual ~ElseStmt() {
-    for(ASTNode* stmt:stmts_) {
-      delete stmt;
-    }
+  ElseStmt(std::list<Ptr<ASTNode> > &stmts):stmts_(std::move(stmts)){
   }
   virtual void PrintTree(int depth) override {
     for(int i=0;i<depth;++i) {
@@ -41,7 +36,7 @@ public:
     }
     std::cout<<")";
     std::cout<<std::endl;
-    for(ASTNode* stmt:stmts_) {
+    for(Ptr<ASTNode>  stmt:stmts_) {
       stmt->PrintTree(depth+1);
     }
   }
@@ -59,7 +54,7 @@ public:
       result+="var "+varname+"=0.0;";
       #endif
     }
-    for(ASTNode* stmt:stmts_) {
+    for(Ptr<ASTNode>  stmt:stmts_) {
       result+=stmt->GenJS();
     }
     #ifdef DEBUG_MODE

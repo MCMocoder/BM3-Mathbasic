@@ -20,14 +20,10 @@ namespace mocoder {
 class Condexpr : public ASTNode {
 public:
   int oper_;
-  ASTNode *lexpr_;
-  ASTNode *rexpr_;
-  Condexpr(int oper, ASTNode *lexpr, ASTNode *rexpr)
+  Ptr<ASTNode> lexpr_;
+  Ptr<ASTNode> rexpr_;
+  Condexpr(int oper, Ptr<ASTNode> lexpr, Ptr<ASTNode> rexpr)
       : oper_(oper), lexpr_(lexpr), rexpr_(rexpr) {}
-  virtual ~Condexpr() {
-    delete lexpr_;
-    delete rexpr_;
-  }
   virtual void PrintTree(int depth) override {
     for (int i = 0; i < depth; ++i) {
       std::cout << " ";
