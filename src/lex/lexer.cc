@@ -20,7 +20,7 @@ using TokenList = Lexer::TokenList;
 Token Lexer::LexIdentifier(const std::string &source) {
   std::string ident;
   ident.push_back(source[lexbegin]);
-  for (int forward = lexbegin+1;; ++forward) {
+  for (int forward = lexbegin + 1;; ++forward) {
     if (forward >= source.size()) {
       lexbegin = forward - 1;
       break;

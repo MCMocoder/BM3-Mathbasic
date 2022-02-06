@@ -2,12 +2,11 @@ i=0
 j=0
 DO
 IF i<j THEN 
-i=-i+1
-PRINT i
+k=-i+1
+PRINT k
 ELSE IF i==j THEN
-PRINT i
+PRINT log(2,3)
 ELSE IF i>j THEN
 PRINT j
 END IF
 LOOP UNTIL i>j
-END
