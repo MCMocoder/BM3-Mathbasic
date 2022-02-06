@@ -16,16 +16,28 @@
 #include "ast/statement/doloopstmt.h"
 #include "ast/statement/ifstmt.h"
 #include "lex/lexer.h"
+#include <iostream>
 #include <list>
 #include <map>
 #include <memory>
-#include <string>
 #include <stack>
-#include <unordered_set>
+#include <string>
 #include <unordered_map>
-#include <iostream>
+#include <unordered_set>
 
 namespace mocoder {
+
+inline std::string ToLowerCase(const std::string &str) {
+  std::string result;
+  for (int i = 0; i < str.size(); ++i) {
+    if (str[i] >= 97) {
+      result.push_back(str[i]);
+    } else {
+      result.push_back(str[i] + 0x20);
+    }
+  }
+  return result;
+}
 class Parser {
 public:
   using TokenList = Lexer::TokenList;
@@ -41,36 +53,35 @@ public:
 
   void ConsumeToken() {
     ++iter_;
-    if(iter_==tokens_.end()) {
-      eof_=true;
+    if (iter_ == tokens_.end()) {
+      eof_ = true;
       return;
     }
-    curtok_=*iter_;
+    curtok_ = *iter_;
   }
 
-  void EnterScope() {
-    curscope_.push_front(std::unordered_set<std::string>());
-  }
+  void EnterScope() { curscope_.push_front(std::unordered_set<std::string>()); }
 
-  void ExitScope() {
-    curscope_.pop_front();
-  }
+  void ExitScope() { curscope_.pop_front(); }
 
-  void AddVar(const std::string& varname) {
+  void AddVar(const std::string &varname) {
+    if (ToLowerCase(varname) == "paimon") {
+      std::cout << "Ehe 'Te Nandayo?!" << std::endl;
+    }
     curscope_.front().insert(varname);
   }
 
   Ptr<Identifier> ParseIdentifier();
   Ptr<Number> ParseNumber();
-  Ptr<ASTNode>  ParseParenExpr();
-  Ptr<ASTNode>  ParseIdExpr();
+  Ptr<ASTNode> ParseParenExpr();
+  Ptr<ASTNode> ParseIdExpr();
   Ptr<ValexprList> ParseValExprList();
   Ptr<IdentifierList> ParseIdentifierList();
-  Ptr<ASTNode>  ParsePrimaryExpr();
-  Ptr<ASTNode>  ParseAddExprTop();
-  Ptr<ASTNode>  ParsePowExpr();
-  Ptr<ASTNode>  ParseMulExpr();
-  Ptr<ASTNode>  ParseAddExpr(Ptr<ASTNode>  lchild);
+  Ptr<ASTNode> ParsePrimaryExpr();
+  Ptr<ASTNode> ParseAddExprTop();
+  Ptr<ASTNode> ParsePowExpr();
+  Ptr<ASTNode> ParseMulExpr();
+  Ptr<ASTNode> ParseAddExpr(Ptr<ASTNode> lchild);
   Ptr<Condexpr> ParseCondExpr();
   Ptr<AssignStmt> ParseAssignStmt();
   Ptr<InputStmt> ParseInputStmt();
@@ -78,9 +89,8 @@ public:
   Ptr<IfStmt> ParseIfStmt();
   Ptr<WhileStmt> ParseWhileStmt();
   Ptr<DoLoopStmt> ParseDoLoopStmt();
-  std::list<Ptr<ASTNode> > ParseTop(); 
+  std::list<Ptr<ASTNode>> ParseTop();
   std::shared_ptr<RootNode> Parse();
-
 
   Parser(TokenList &tokens) : tokens_(std::move(tokens)) {
     curtok_ = tokens_.front();
@@ -95,10 +105,12 @@ static const std::unordered_map<std::string, int /*ParamNum*/> funcmap =
 
 class Sema {
 public:
-  static bool SearchVar(const std::string &varname,
-                        const Parser* psr) {
-    for(const std::unordered_set<std::string>& scope:psr->curscope_) {
-      if(scope.count(varname)!=0) {
+  static bool SearchVar(const std::string &varname, const Parser *psr) {
+    for (const std::unordered_set<std::string> &scope : psr->curscope_) {
+      if (scope.count(varname) != 0) {
+        if (ToLowerCase(varname) == "paimon") {
+          std::cout << "Ehe 'Te Nandayo?!" << std::endl;
+        }
         return true;
       }
     }
