@@ -47,6 +47,7 @@ ASTNode *Parser::ParseParenExpr() {
     ConsumeToken(); // RBRACKET
     return result;
   } else {
+    delete result;
     std::__throw_logic_error("Expected ')'");
   }
 }
@@ -65,10 +66,12 @@ ASTNode *Parser::ParseIdExpr() {
     CallFuncExpr *result = new CallFuncExpr(id, ParseValExprList());
 
     if (result->params_->exprs_.size() != funcmap.find(id)->second) {
+      delete result;
       std::__throw_logic_error("Unexpected Param Number");
     }
 
     if (curtok_.first != Lexer::RBRACKET) {
+      delete result;
       std::__throw_logic_error("Expected ')'");
     }
     ConsumeToken(); // RBRACKET
@@ -78,6 +81,7 @@ ASTNode *Parser::ParseIdExpr() {
     Identifier *result = new Identifier(id);
 
     if (!Sema::SearchVar(result->name_, this)) {
+      delete result;
       std::__throw_logic_error("Use of undeclared variable");
     }
 
@@ -94,6 +98,7 @@ ValexprList *Parser::ParseValExprList() {
     }
     ConsumeToken(); // COMMA
     if (eof_) {
+      delete result;
       std::__throw_logic_error("Unexpected EOF");
     }
   }
@@ -115,6 +120,8 @@ IdentifierList *Parser::ParseIdentifierList() {
     }
     ConsumeToken(); // COMMA
     if (eof_) {
+      delete result;
+      delete curid;
       std::__throw_logic_error("Unexpected EOF");
     }
   }
@@ -181,6 +188,7 @@ Condexpr *Parser::ParseCondExpr() {
   ASTNode *lchild = ParseAddExprTop();
   if (!(curtok_.first >= Lexer::GREATEREQUAL &&
         curtok_.first <= Lexer::EQUAL)) {
+    delete lchild;
     std::__throw_logic_error("Expected Relop");
   }
   int relop = curtok_.first;
@@ -193,6 +201,7 @@ Condexpr *Parser::ParseCondExpr() {
 AssignStmt *Parser::ParseAssignStmt() {
   Identifier *var = ParseIdentifier();
   if (curtok_.first != Lexer::ASSIGN) {
+    delete var;
     std::__throw_logic_error("Expected ASSIGN");
   }
   ConsumeToken(); // ASSIGN
@@ -217,10 +226,12 @@ IfStmt *Parser::ParseIfStmt() {
   ConsumeToken(); // IF
   Condexpr *cond = ParseCondExpr();
   if (curtok_.second != "THEN") {
+    delete cond;
     std::__throw_logic_error("Expected THEN");
   }
   ConsumeToken(); // THEN
   if (curtok_.first != Lexer::NEWLINE) {
+    delete cond;
     std::__throw_logic_error("Expected NEWLINE");
   }
   ConsumeToken(); // NEWLINE
@@ -246,6 +257,7 @@ WhileStmt *Parser::ParseWhileStmt() {
   ConsumeToken(); // WHILE
   Condexpr *cond = ParseCondExpr();
   if (curtok_.first != Lexer::NEWLINE) {
+    delete cond;
     std::__throw_logic_error("Expected NEWLINE");
   }
   ConsumeToken(); // NEWLINE
@@ -254,6 +266,7 @@ WhileStmt *Parser::ParseWhileStmt() {
   std::list<ASTNode *> stmts = ParseTop();
   WhileStmt *result = new WhileStmt(cond, stmts);
   if (curtok_.second != "WEND") {
+    delete result;
     std::__throw_logic_error("Expected WEND");
   }
   ConsumeToken(); // WEND
@@ -297,6 +310,9 @@ std::list<ASTNode *> Parser::ParseTop() {
       } else if (curtok_.second == "PRINT") {
         result.push_back(ParsePrintStmt());
       } else if (curtok_.second == "END"||eof_) {
+        if(curtok_.second!="END") {
+          std::__throw_logic_error("Expected END");
+        }
         ConsumeToken(); // END
         if(curtok_.second=="IF") {
           ConsumeToken();
@@ -312,7 +328,7 @@ std::list<ASTNode *> Parser::ParseTop() {
       } else {
         result.push_back(ParseAssignStmt());
       }
-    } catch (std::logic_error error) {
+    } catch (std::logic_error& error) {
       std::cout << error.what() << std::endl;
       
       /*while (curtok_.first != Lexer::NEWLINE || !eof_) {

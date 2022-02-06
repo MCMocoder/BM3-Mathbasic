@@ -39,9 +39,9 @@ public:
       result+="outside.print(";
       result+=node->GenJS();
       #ifdef DEBUG_MODE
-      result+="=outside.input();\n";
+      result+=");\n";
       #else
-      result+="=outside.input();";
+      result+=");";
       #endif
     }
     return result;
