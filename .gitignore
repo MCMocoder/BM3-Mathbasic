@@ -1,40 +1,5 @@
-
-# Created by https://www.toptal.com/developers/gitignore/api/c++,visualstudiocode,macos,windows,linux
-# Edit at https://www.toptal.com/developers/gitignore?templates=c++,visualstudiocode,macos,windows,linux
-
-### C++ ###
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
+# Created by https://www.toptal.com/developers/gitignore/api/vim,macos,windows,linux
+# Edit at https://www.toptal.com/developers/gitignore?templates=vim,macos,windows,linux
 
 ### Linux ###
 *~
@@ -80,26 +45,29 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-### VisualStudioCode ###
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/*.code-snippets
+### macOS Patch ###
+# iCloud generated files
+*.icloud
 
-# Local History for Visual Studio Code
-.history/
+### Vim ###
+# Swap
+[._]*.s[a-v][a-z]
+!*.svg  # comment out if you don't need vector files
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
 
-# Built Visual Studio Code Extensions
-*.vsix
+# Session
+Session.vim
+Sessionx.vim
 
-### VisualStudioCode Patch ###
-# Ignore all local history of files
-.history
-.ionide
-
-# Support for Project snippet scope
+# Temporary
+.netrwhist
+# Auto-generated tag files
+tags
+# Persistent undo
+[._]*.un~
 
 ### Windows ###
 # Windows thumbnail cache files
@@ -127,8 +95,11 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# Extension
-build/*
-.cache/*
+### SpaceVim ###
+.vimspector.json
+compile_commands.json
+build/
+.xmake/
+.cache/
 
-# End of https://www.toptal.com/developers/gitignore/api/c++,visualstudiocode,macos,windows,linux
+# End of https://www.toptal.com/developers/gitignore/api/vim,macos,windows,linux
