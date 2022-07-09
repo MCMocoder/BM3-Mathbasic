@@ -20,6 +20,7 @@
 #include <list>
 #include <map>
 #include <memory>
+#include <ostream>
 #include <stack>
 #include <string>
 #include <unordered_map>
@@ -68,6 +69,18 @@ public:
     if (ToLowerCase(varname) == "paimon") {
       std::cout << "Ehe 'Te Nandayo?!" << std::endl;
     }
+    if (ToLowerCase(varname) == "kela") {
+      std::cout << "Support Africa's Agriculture!!!" << std::endl;
+    }
+    if (ToLowerCase(varname) == "bilibili") {
+      std::cout << "SHUSHU is staring at you" << std::endl;
+    }
+    if (ToLowerCase(varname) == "minecraft") {
+      std::cout << "Let's bugjump" << std::endl;
+    }
+    if (ToLowerCase(varname) == "biden") {
+      std::cout << "DAMN" << std::endl;
+    }
     curscope_.front().insert(varname);
   }
 
@@ -108,9 +121,9 @@ public:
   static bool SearchVar(const std::string &varname, const Parser *psr) {
     for (const std::unordered_set<std::string> &scope : psr->curscope_) {
       if (scope.count(varname) != 0) {
-        if (ToLowerCase(varname) == "paimon") {
+        /*if (ToLowerCase(varname) == "paimon") {
           std::cout << "Ehe 'Te Nandayo?!" << std::endl;
-        }
+        }*/
         return true;
       }
     }

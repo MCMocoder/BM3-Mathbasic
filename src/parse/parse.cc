@@ -227,17 +227,17 @@ Ptr<IfStmt> Parser::ParseIfStmt() {
   ConsumeToken(); // NEWLINE
   ++linenum_;
   EnterScope();
-  std::list<Ptr<ASTNode> > stmts = ParseTop();
+  std::list<Ptr<ASTNode>> stmts = ParseTop();
   Ptr<IfStmt> result(new IfStmt(cond, stmts));
   result->declvars_ = curscope_.front();
   if (curtok_.second == "ELSE") {
     ConsumeToken(); // ELSE
     ExitScope();
     EnterScope();
-    std::list<Ptr<ASTNode> > elsestmts = ParseTop();
+    std::list<Ptr<ASTNode>> elsestmts = ParseTop();
     Ptr<ElseStmt> elseres(new ElseStmt(elsestmts));
     elseres->declvars_ = curscope_.front();
-    result->else_=elseres;
+    result->else_ = elseres;
   }
   ExitScope();
   return result;
@@ -252,7 +252,7 @@ Ptr<WhileStmt> Parser::ParseWhileStmt() {
   ConsumeToken(); // NEWLINE
   ++linenum_;
   EnterScope();
-  std::list<Ptr<ASTNode> > stmts = ParseTop();
+  std::list<Ptr<ASTNode>> stmts = ParseTop();
   Ptr<WhileStmt> result(new WhileStmt(cond, stmts));
   if (curtok_.second != "WEND") {
     std::__throw_logic_error("Expected WEND");
@@ -271,7 +271,7 @@ Ptr<DoLoopStmt> Parser::ParseDoLoopStmt() {
   ConsumeToken(); // NEWLINE
   ++linenum_;
   EnterScope();
-  std::list<Ptr<ASTNode> > stmts = ParseTop();
+  std::list<Ptr<ASTNode>> stmts = ParseTop();
   if (curtok_.second != "LOOPUNTIL") {
     std::__throw_logic_error("Expected LOOP UNTIL");
   }
@@ -283,9 +283,9 @@ Ptr<DoLoopStmt> Parser::ParseDoLoopStmt() {
   return result;
 }
 
-std::list<Ptr<ASTNode> > Parser::ParseTop() {
-  std::list<Ptr<ASTNode> > result;
-  while (!eof_ || curtok_.second == "END"||curtok_.first==Lexer::NEWLINE) {
+std::list<Ptr<ASTNode>> Parser::ParseTop() {
+  std::list<Ptr<ASTNode>> result;
+  while (!eof_ || curtok_.second == "END" || curtok_.first == Lexer::NEWLINE) {
     try {
       if (curtok_.second == "IF") {
         result.push_back(ParseIfStmt());
@@ -297,12 +297,12 @@ std::list<Ptr<ASTNode> > Parser::ParseTop() {
         result.push_back(ParseInputStmt());
       } else if (curtok_.second == "PRINT") {
         result.push_back(ParsePrintStmt());
-      } else if (curtok_.second == "END"||eof_) {
-        if(curtok_.second!="END") {
+      } else if (curtok_.second == "END" || eof_) {
+        if (curtok_.second != "END") {
           std::__throw_logic_error("Expected END");
         }
         ConsumeToken(); // END
-        if(curtok_.second=="IF") {
+        if (curtok_.second == "IF") {
           ConsumeToken();
         }
         return result;
@@ -316,9 +316,9 @@ std::list<Ptr<ASTNode> > Parser::ParseTop() {
       } else {
         result.push_back(ParseAssignStmt());
       }
-    } catch (std::logic_error& error) {
+    } catch (std::logic_error &error) {
       std::cout << error.what() << std::endl;
-      
+
       /*while (curtok_.first != Lexer::NEWLINE || !eof_) {
         ConsumeToken();
       }
@@ -330,7 +330,7 @@ std::list<Ptr<ASTNode> > Parser::ParseTop() {
 }
 
 std::shared_ptr<RootNode> Parser::Parse() {
-  std::list<Ptr<ASTNode> > stmts = ParseTop();
+  std::list<Ptr<ASTNode>> stmts = ParseTop();
   std::shared_ptr<RootNode> node(new RootNode(stmts));
   node->declvars_ = curscope_.front();
   return node;

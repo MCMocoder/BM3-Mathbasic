@@ -1,0 +1,7 @@
+target("bm3")
+  set_kind("binary")
+  add_includedirs("$(scriptdir)/include")
+  add_files("src/bm3.cc")
+  add_files("src/compile.cc")
+  add_files("src/lex/lexer.cc")
+  add_files("src/parse/parse.cc")

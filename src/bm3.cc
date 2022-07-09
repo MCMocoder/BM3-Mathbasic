@@ -9,25 +9,25 @@
  *
  */
 
+#include "compile.h"
+#include "lex/lexer.h"
+#include "parse/parse.h"
 #include <fstream>
 #include <sstream>
 #include <string>
-#include "lex/lexer.h"
-#include "parse/parse.h"
-#include "compile.h"
-
 
 using namespace mocoder;
 using namespace std;
 
-int main(int argc,char** argv) {
-  if(argc!=2) {
+int main(int argc, char **argv) {
+  if (argc != 2) {
     return 233;
   }
+  std::ifstream a(argv[0]);
   std::ifstream source(argv[1]);
   std::stringstream buf;
-  buf<<source.rdbuf();
+  buf << source.rdbuf();
   std::string sourcecode(buf.str());
-  cout<<Compile(sourcecode);
+  cout << Compile(sourcecode);
   return 0;
 }
