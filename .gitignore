@@ -95,11 +95,9 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-### SpaceVim ###
-.vimspector.json
 compile_commands.json
-build/
-.xmake/
 .cache/
+.xmake/
+build
 
 # End of https://www.toptal.com/developers/gitignore/api/vim,macos,windows,linux

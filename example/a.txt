@@ -1,15 +1,11 @@
-i=0
+i=1
 j=0
 paimon=0
 DO
 IF i<j THEN 
-k=-i+1
 paimon=2
-PRINT k
 ELSE IF i==j THEN
-PRINT log(2,3)
 ELSE IF i>j THEN
-PRINT j
 END IF
 LOOP UNTIL i>j
 END

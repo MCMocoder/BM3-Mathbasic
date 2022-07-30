@@ -23,7 +23,6 @@ int main(int argc, char **argv) {
   if (argc != 2) {
     return 233;
   }
-  std::ifstream a(argv[0]);
   std::ifstream source(argv[1]);
   std::stringstream buf;
   buf << source.rdbuf();
