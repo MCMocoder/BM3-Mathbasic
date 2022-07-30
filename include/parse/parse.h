@@ -66,24 +66,6 @@ public:
   void ExitScope() { curscope_.pop_front(); }
 
   void AddVar(const std::string &varname) {
-    if (ToLowerCase(varname) == "paimon") {
-      std::cout << "Ehe 'Te Nandayo?!" << std::endl;
-    }
-    if (ToLowerCase(varname) == "kela") {
-      std::cout << "Support African Agriculture!!!" << std::endl;
-    }
-    if (ToLowerCase(varname) == "bilibili") {
-      std::cout << "SHUSHU is staring at you" << std::endl;
-    }
-    if (ToLowerCase(varname) == "minecraft") {
-      std::cout << "Let's bugjump" << std::endl;
-    }
-    if (ToLowerCase(varname) == "biden") {
-      std::cout << "DAMN" << std::endl;
-    }
-    if (ToLowerCase(varname) == "cxk") {
-      std::cout << "CHICKEN IS SO BEAUTIFUL!" << std::endl;
-    }
     curscope_.front().insert(varname);
   }
 
