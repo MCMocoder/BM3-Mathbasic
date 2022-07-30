@@ -27,6 +27,7 @@ int main(int argc, char **argv) {
   std::stringstream buf;
   buf << source.rdbuf();
   std::string sourcecode(buf.str());
-  cout << Compile(sourcecode);
+  //cout << Compile(sourcecode);
+  Compile(sourcecode);
   return 0;
 }
