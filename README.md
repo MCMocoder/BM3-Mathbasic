@@ -1,4 +1,4 @@
-# BM3-Mathbasic : 数学必修3（A版）Basic的编译器
-该编译器可以将人教社数学必修3（A版）的Basic编译为Javascript.
+# BM3-Mathbasic : 数学必修3（A版）Basic的解释器
 
-半完成状态，前端未完成(Pending)
+该解释器可以运行数学必修3（A版）的Basic语言的一个改版
+
