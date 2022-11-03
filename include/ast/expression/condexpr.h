@@ -20,9 +20,9 @@ namespace mocoder {
 class Condexpr : public ASTNode {
 public:
   int oper_;
-  Ptr<ASTNode> lexpr_;
-  Ptr<ASTNode> rexpr_;
-  Condexpr(int oper, Ptr<ASTNode> lexpr, Ptr<ASTNode> rexpr)
+  Ptr<Valexpr> lexpr_;
+  Ptr<Valexpr> rexpr_;
+  Condexpr(int oper, Ptr<Valexpr> lexpr, Ptr<Valexpr> rexpr)
       : oper_(oper), lexpr_(lexpr), rexpr_(rexpr) {}
   virtual void PrintTree(int depth) override {
     for (int i = 0; i < depth; ++i) {
@@ -79,6 +79,24 @@ public:
     result += rexpr_->GenJS();
     return result;
   }
+  virtual bool EvalCond() {
+    switch (oper_) {
+    case Lexer::GREATEREQUAL:
+      return lexpr_->EvalVal()>=rexpr_->EvalVal();
+    case Lexer::GREATER:
+      return lexpr_->EvalVal()>rexpr_->EvalVal();
+    case Lexer::LESSEQUAL:
+      return lexpr_->EvalVal()<=rexpr_->EvalVal();
+    case Lexer::LESS:
+      return lexpr_->EvalVal()<rexpr_->EvalVal();
+    case Lexer::NOEQUAL:
+      return lexpr_->EvalVal()!=rexpr_->EvalVal();
+    case Lexer::EQUAL:
+      return lexpr_->EvalVal()==rexpr_->EvalVal();
+    }
+    return false;
+  }
+  virtual void Eval() override {}
 };
 } // namespace mocoder
 

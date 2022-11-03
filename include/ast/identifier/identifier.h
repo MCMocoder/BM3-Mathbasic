@@ -13,11 +13,13 @@
 #define IDENTIFIER_H_
 
 #include "ast/astnode.h"
+#include "ast/expression/valexpr.h"
+#include "ast/variable.h"
 #include "lex/lexer.h"
 #include <string>
 
 namespace mocoder {
-class Identifier : public ASTNode {
+class Identifier : public Valexpr {
 public:
   std::string name_;
   Identifier(const std::string& name):name_(name){}
@@ -28,12 +30,10 @@ public:
     std::cout<<depth<<":"<<"Identifier(name="<<name_<<")";
     std::cout<<std::endl;
   }
-  virtual std::string GenJS() override {
-    return name_;
-  }
+  virtual std::string GenJS() override { return name_; }
+  virtual double EvalVal() override { return Vars::GetVars().GetVal(name_); }
+  virtual void Eval() override {}
 };
 } // namespace mocoder
 
 #endif
-
-

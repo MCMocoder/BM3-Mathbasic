@@ -1,0 +1,6 @@
+i=2
+WHILE i<5
+i=i+2
+PRINT i*2
+WEND
+END

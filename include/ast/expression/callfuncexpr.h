@@ -12,13 +12,17 @@
 #ifndef CALLFUNCEXPR_H_
 #define CALLFUNCEXPR_H_
 
+#include <cmath>
+
 #include "ast/astnode.h"
+#include "ast/expression/valexpr.h"
 #include "ast/expression/valexprlist.h"
 #include "ast/identifier/identifier.h"
 
+
 namespace mocoder {
-class CallFuncExpr : public ASTNode {
-public:
+class CallFuncExpr : public Valexpr {
+ public:
   std::string name_;
   Ptr<ValexprList> params_;
   CallFuncExpr(std::string &name, Ptr<ValexprList> params)
@@ -34,14 +38,32 @@ public:
   }
   virtual std::string GenJS() override {
     std::string result;
-    result += "Math.";//All Internal functions are from Javascript.Math
+    result += "Math.";  // All Internal functions are from Javascript.Math
     result += name_;
     result += "(";
     result += params_->GenJS();
     result += ")";
     return result;
   }
+  virtual double EvalVal() override {
+    if (name_ == "cos") {
+      return cos((*(params_->exprs_.begin()))->EvalVal());
+    } else if (name_ == "sin") {
+      return sin((*(params_->exprs_.begin()))->EvalVal());
+    } else if (name_ == "tan") {
+      return tan((*(params_->exprs_.begin()))->EvalVal());
+    } else if (name_ == "ln") {
+      return log((*(params_->exprs_.begin()))->EvalVal());
+    } else if (name_ == "lg") {
+      return log10((*(params_->exprs_.begin()))->EvalVal());
+    } else if (name_ == "log") {
+      return log((*(params_->exprs_.begin()))->EvalVal()) /
+             log((*(std::next(params_->exprs_.begin(), 1)))->EvalVal());
+    }
+    return 0.0;
+  }
+  virtual void Eval() override {}
 };
-} // namespace mocoder
+}  // namespace mocoder
 
 #endif

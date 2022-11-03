@@ -4,10 +4,12 @@ paimon=0
 DO
 IF i<j THEN 
 paimon=2
+q=2
 ELSE IF i==j THEN
 i=2
 ELSE IF i>j THEN
 j=4
+qq=4
 END IF
 LOOP UNTIL i>j
 END

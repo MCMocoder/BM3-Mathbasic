@@ -99,5 +99,6 @@ compile_commands.json
 .cache/
 .xmake/
 build
+.vscode/
 
 # End of https://www.toptal.com/developers/gitignore/api/vim,macos,windows,linux

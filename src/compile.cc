@@ -22,6 +22,9 @@ std::string Compile(const std::string &source) {
   Lexer::TokenList lst=lex.Lex(source);
   Parser parse(lst);
   std::shared_ptr<ASTNode> node=parse.Parse();
-  node->PrintTree(0);
+  //node->PrintTree(0);
+  if (parse.success_) {
+    node->Eval();
+  }
   return node->GenJS();
 }

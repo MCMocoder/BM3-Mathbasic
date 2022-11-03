@@ -15,14 +15,15 @@
 #include "ast/astnode.h"
 #include "ast/expression/valexpr.h"
 #include "ast/identifier/identifier.h"
+#include "ast/variable.h"
 #include "lex/lexer.h"
 
 namespace mocoder {
 class AssignStmt : public ASTNode {
-public:
+ public:
   Ptr<Identifier> var_;
-  Ptr<ASTNode> expr_;
-  AssignStmt(Ptr<Identifier> var, Ptr<ASTNode> expr) : var_(var), expr_(expr) {}
+  Ptr<Valexpr> expr_;
+  AssignStmt(Ptr<Identifier> var, Ptr<Valexpr> expr) : var_(var), expr_(expr) {}
   virtual void PrintTree(int depth) override {
     for (int i = 0; i < depth; ++i) {
       std::cout << " ";
@@ -38,14 +39,22 @@ public:
     result += var_->GenJS();
     result += "=";
     result += expr_->GenJS();
-    #ifdef DEBUG_MODE
+#ifdef DEBUG_MODE
     result += ";\n";
-    #else
+#else
     result += ";";
-    #endif
+#endif
     return result;
   }
+  virtual double Value() { return 0; }
+  virtual void Eval() override {
+    Vars::GetVars().SetVal(var_->name_, expr_->EvalVal());
+  }
+  /*virtual void Eval(Ptr<ASTNode> parent) override {
+    expr_->Eval(shared_from_this());
+    parent->GetVars().insert({var_->name_,expr_->GetVal()});
+  }*/
 };
-} // namespace mocoder
+}  // namespace mocoder
 
 #endif

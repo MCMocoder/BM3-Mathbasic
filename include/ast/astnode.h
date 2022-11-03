@@ -16,6 +16,7 @@
 
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <unordered_set>
 #include <list>
 #include <iostream>
@@ -25,12 +26,19 @@ namespace mocoder {
 template<typename T>
 using Ptr=std::shared_ptr<T>;
 
-class ASTNode {
+class ASTNode: public std::enable_shared_from_this<ASTNode> {
 public:
 
   virtual std::string GenJS()=0;
   virtual std::string ExportASTAsJson()=delete;
   virtual void PrintTree(int depth)=0;
+
+  //virtual double GetVal();
+  //virtual double Value();
+
+  virtual void Eval() = 0;
+
+  //virtual std::unordered_map<std::string, double>& GetVars();
 
   ASTNode(){}
   virtual ~ASTNode(){}

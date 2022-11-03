@@ -39,6 +39,7 @@ inline std::string ToLowerCase(const std::string &str) {
   }
   return result;
 }
+
 class Parser {
 public:
   using TokenList = Lexer::TokenList;
@@ -51,6 +52,7 @@ public:
   bool eof_ = false;
   long linenum_ = 0;
   std::list<std::unordered_set<std::string>> curscope_;
+  bool success_=true;
 
   void ConsumeToken() {
     ++iter_;
@@ -71,15 +73,15 @@ public:
 
   Ptr<Identifier> ParseIdentifier();
   Ptr<Number> ParseNumber();
-  Ptr<ASTNode> ParseParenExpr();
-  Ptr<ASTNode> ParseIdExpr();
+  Ptr<Valexpr> ParseParenExpr();
+  Ptr<Valexpr> ParseIdExpr();
   Ptr<ValexprList> ParseValExprList();
-  Ptr<IdentifierList> ParseIdentifierList();
-  Ptr<ASTNode> ParsePrimaryExpr();
-  Ptr<ASTNode> ParseAddExprTop();
-  Ptr<ASTNode> ParsePowExpr();
-  Ptr<ASTNode> ParseMulExpr();
-  Ptr<ASTNode> ParseAddExpr(Ptr<ASTNode> lchild);
+  void ParseIdentifierList(Ptr<InputStmt> input);
+  Ptr<Valexpr> ParsePrimaryExpr();
+  Ptr<Valexpr> ParseAddExprTop();
+  Ptr<Valexpr> ParsePowExpr();
+  Ptr<Valexpr> ParseMulExpr();
+  Ptr<Valexpr> ParseAddExpr(Ptr<Valexpr> lchild);
   Ptr<Condexpr> ParseCondExpr();
   Ptr<AssignStmt> ParseAssignStmt();
   Ptr<InputStmt> ParseInputStmt();

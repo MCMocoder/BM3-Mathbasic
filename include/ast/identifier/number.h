@@ -13,11 +13,12 @@
 #define NUMBER_H_
 
 #include "ast/astnode.h"
+#include "ast/expression/valexpr.h"
 #include "lex/lexer.h"
 #include <string>
 
 namespace mocoder {
-class Number : public ASTNode {
+class Number : public Valexpr {
 public:
   double val_;
   Number(const double &val) : val_(val) {}
@@ -29,9 +30,9 @@ public:
               << "Number(val=" << val_ << ")";
     std::cout << std::endl;
   }
-  virtual std::string GenJS() override {
-    return std::to_string(val_);
-  }
+  virtual std::string GenJS() override { return std::to_string(val_); }
+  virtual double EvalVal() override { return val_; }
+  virtual void Eval() override {}
 };
 } // namespace mocoder
 

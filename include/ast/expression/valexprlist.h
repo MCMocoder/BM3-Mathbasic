@@ -20,9 +20,9 @@
 namespace mocoder {
 class ValexprList : public ASTNode {
 public:
-  std::list<Ptr<ASTNode>> exprs_;
+  std::list<Ptr<Valexpr>> exprs_;
   ValexprList() {}
-  void AddExpr(Ptr<ASTNode>expr) { exprs_.push_back(expr); }
+  void AddExpr(Ptr<Valexpr>expr) { exprs_.push_back(expr); }
   virtual void PrintTree(int depth) override {
     for (int i = 0; i < depth; ++i) {
       std::cout << " ";
@@ -30,19 +30,27 @@ public:
     std::cout << depth << ":"
               << "Valexprlist";
     std::cout<<std::endl;          
-    for (Ptr<ASTNode>stmt : exprs_) {
+    for (Ptr<Valexpr>stmt : exprs_) {
       stmt->PrintTree(depth + 1);
     }
   }
   virtual std::string GenJS() override {
     std::string result;
-    for(Ptr<ASTNode>  expr:exprs_) {
+    for(Ptr<Valexpr>  expr:exprs_) {
       result+=expr->GenJS();
       result+=",";
     }
     result.erase(result.size()-1);
     return result;
   }
+  virtual std::list<double> EvalVList() {
+    std::list<double> res;
+    for (auto i : exprs_) {
+      res.push_back(i->EvalVal());
+    }
+    return res;
+  }
+  virtual void Eval() override {}
 };
 } // namespace mocoder
 
