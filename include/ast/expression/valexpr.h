@@ -50,7 +50,9 @@ class Valexpr : public ASTNode {
         std::cout << "^";
     }
     std::cout << std::endl;
-    lchild_->PrintTree(depth + 1);
+    if (lchild_.get() != nullptr) {
+      lchild_->PrintTree(depth + 1);
+    }
     rchild_->PrintTree(depth + 1);
   }
   virtual std::string GenJS() override {
@@ -85,6 +87,9 @@ class Valexpr : public ASTNode {
       case Lexer::ADD:
         return lchild_->EvalVal() + rchild_->EvalVal();
       case Lexer::SUB:
+        if (lchild_.get() == nullptr) {
+          return -rchild_->EvalVal();
+        }
         return lchild_->EvalVal() - rchild_->EvalVal();
       case Lexer::MUL:
         return lchild_->EvalVal() * rchild_->EvalVal();

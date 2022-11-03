@@ -1,7 +1,6 @@
 i=2
-PR
-WHILE i<5
-i=i+2
-PRINT i*2
+WHILE i>-1
+INPUT i
+PRINT i^i
 WEND
 END

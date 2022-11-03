@@ -46,10 +46,6 @@ class AssignStmt : public ASTNode {
   virtual void Eval() override {
     Vars::GetVars().SetVal(var_->name_, expr_->EvalVal());
   }
-  /*virtual void Eval(Ptr<ASTNode> parent) override {
-    expr_->Eval(shared_from_this());
-    parent->GetVars().insert({var_->name_,expr_->GetVal()});
-  }*/
 };
 }  // namespace mocoder
 
