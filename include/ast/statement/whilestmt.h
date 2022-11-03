@@ -46,26 +46,14 @@ public:
     std::string result;
     result += "if(";
     result += cond_->GenJS();
-#ifdef DEBUG_MODE
-    result += "){\n";
-#else
     result += "){";
-#endif
     for (std::string varname : declvars_) {
-#ifdef DEBUG_MODE
-      result += "var " + varname + "=0.0;\n";
-#else
       result += "var " + varname + "=0.0;";
-#endif
     }
     for (Ptr<ASTNode> stmt : stmts_) {
       result += stmt->GenJS();
     }
-#ifdef DEBUG_MODE
-    result += "}\n";
-#else
     result += "}";
-#endif
     return result;
   }
 

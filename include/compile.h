@@ -13,5 +13,5 @@
 
 #include <string>
 
-std::string Compile(const std::string& source);
+void Compile(const std::string& source);
 

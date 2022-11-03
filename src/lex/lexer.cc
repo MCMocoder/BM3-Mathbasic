@@ -10,7 +10,10 @@
  */
 
 #include "lex/lexer.h"
+
+#include <iostream>
 #include <stdexcept>
+
 
 namespace mocoder {
 
@@ -115,39 +118,45 @@ Token Lexer::LexOper(const std::string &source) {
 
 TokenList Lexer::Lex(const std::string &source) {
   TokenList result;
-  for (; lexbegin < source.size(); ++lexbegin) {
-    char beginchar = source[lexbegin];
-    if ((beginchar >= 'a' && beginchar <= 'z') ||
-        (beginchar >= 'A' && beginchar <= 'Z')) {
-      result.push_back(LexIdentifier(source));
-    } else if (beginchar >= '0' && beginchar <= '9') {
-      result.push_back(LexNumber(source));
-    } else if (beginchar == '>' || beginchar == '<' || beginchar == '=' ||
-               beginchar == '+' || beginchar == '-' || beginchar == '*' ||
-               beginchar == '/' || beginchar == '^') {
-      result.push_back(LexOper(source));
-    } else {
-      switch (beginchar) {
-      case '(':
-        result.push_back(Token(LBRACKET, ""));
-        break;
-      case ')':
-        result.push_back(Token(RBRACKET, ""));
-        break;
-      case ',':
-        result.push_back(Token(COMMA, ""));
-        break;
-      case '\n':
-        result.push_back(Token(NEWLINE, ""));
-        break;
-      case ' ':
-      case '\t':
-        continue;
-      default:
-        std::__throw_logic_error("Unexpected Token");
+  try {
+    for (; lexbegin < source.size(); ++lexbegin) {
+      char beginchar = source[lexbegin];
+      if ((beginchar >= 'a' && beginchar <= 'z') ||
+          (beginchar >= 'A' && beginchar <= 'Z')) {
+        result.push_back(LexIdentifier(source));
+      } else if (beginchar >= '0' && beginchar <= '9') {
+        result.push_back(LexNumber(source));
+      } else if (beginchar == '>' || beginchar == '<' || beginchar == '=' ||
+                 beginchar == '+' || beginchar == '-' || beginchar == '*' ||
+                 beginchar == '/' || beginchar == '^') {
+        result.push_back(LexOper(source));
+      } else {
+        switch (beginchar) {
+          case '(':
+            result.push_back(Token(LBRACKET, ""));
+            break;
+          case ')':
+            result.push_back(Token(RBRACKET, ""));
+            break;
+          case ',':
+            result.push_back(Token(COMMA, ""));
+            break;
+          case '\n':
+            result.push_back(Token(NEWLINE, ""));
+            ++linenum_;
+            break;
+          case ' ':
+          case '\t':
+            continue;
+          default:
+            std::__throw_logic_error("Unexpected Token");
+        }
       }
     }
+  } catch (std::logic_error err) {
+    std::cout << "Line " << linenum_ << " : " << err.what() << std::endl;
+    success_ = false;
   }
   return result;
 }
-} // namespace mocoder
+}  // namespace mocoder

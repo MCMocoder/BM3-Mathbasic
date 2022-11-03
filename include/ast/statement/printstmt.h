@@ -39,11 +39,7 @@ public:
     for (Ptr<ASTNode> node : exprs_->exprs_) {
       result += "outside.print(";
       result += node->GenJS();
-#ifdef DEBUG_MODE
-      result += ");\n";
-#else
       result += ");";
-#endif
     }
     return result;
   }

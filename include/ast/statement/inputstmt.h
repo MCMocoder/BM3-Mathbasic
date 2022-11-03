@@ -44,11 +44,7 @@ public:
     std::string result;
     for (Ptr<ASTNode> node : vars_) {
       result += node->GenJS();
-#ifdef DEBUG_MODE
-      result += "=outside.input();\n";
-#else
       result += "=outside.input();";
-#endif
     }
     return result;
   }

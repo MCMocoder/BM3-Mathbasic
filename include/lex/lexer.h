@@ -43,7 +43,9 @@ public:
 
   typedef std::list<std::pair<TokenType, std::string>> TokenList;
   typedef std::pair<TokenType, std::string> Token;
-
+  int linenum_ = 1;
+  bool success_=true;
+  
   int lexbegin = 0;
 
   Token LexIdentifier(const std::string &source);

@@ -42,17 +42,9 @@ public:
   }
 
   virtual std::string GenJS() override {
-#ifdef DEBUG_MODE
-    std::string result = "function run() {\n";
-#else
     std::string result = "function run() {";
-#endif
     for (std::string varname : declvars_) {
-#ifdef DEBUG_MODE
-      result += "var " + varname + "=0.0;\n";
-#else
       result += "var " + varname + "=0.0;";
-#endif
     }
     for (Ptr<ASTNode> stmt : stmts_) {
       result += stmt->GenJS();
@@ -67,15 +59,6 @@ public:
       i->Eval();
     }
   }
-
-  /*virtual void Eval(Ptr<ASTNode> parent) override {
-    for(auto i:declvars_) {
-      vals_.insert({i,0.0});
-    }
-    for(Ptr<ASTNode> i:stmts_) {
-      i->Eval(shared_from_this());
-    }
-  }*/
 };
 
 } // namespace mocoder

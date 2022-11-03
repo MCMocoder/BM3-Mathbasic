@@ -21,14 +21,12 @@ using namespace std;
 
 int main(int argc, char **argv) {
   if (argc != 2) {
-    //return 233;
+    return 233;
   }
-  //std::ifstream source(argv[1]);
-  std::ifstream source("example/b.txt");
+  std::ifstream source(argv[1]);
   std::stringstream buf;
   buf << source.rdbuf();
   std::string sourcecode(buf.str());
-  //cout << Compile(sourcecode);
   Compile(sourcecode);
   return 0;
 }

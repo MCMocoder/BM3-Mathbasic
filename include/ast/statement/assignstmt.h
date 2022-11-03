@@ -39,11 +39,7 @@ class AssignStmt : public ASTNode {
     result += var_->GenJS();
     result += "=";
     result += expr_->GenJS();
-#ifdef DEBUG_MODE
-    result += ";\n";
-#else
     result += ";";
-#endif
     return result;
   }
   virtual double Value() { return 0; }

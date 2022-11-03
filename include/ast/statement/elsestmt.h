@@ -44,26 +44,14 @@ public:
   }
   virtual std::string GenJS() override {
     std::string result;
-#ifdef DEBUG_MODE
-    result += "else{\n";
-#else
     result += "else{";
-#endif
     for (std::string varname : declvars_) {
-#ifdef DEBUG_MODE
-      result += "var " + varname + "=0.0;\n";
-#else
       result += "var " + varname + "=0.0;";
-#endif
     }
     for (Ptr<ASTNode> stmt : stmts_) {
       result += stmt->GenJS();
     }
-#ifdef DEBUG_MODE
-    result += "}\n";
-#else
     result += "}";
-#endif
     return result;
   }
 

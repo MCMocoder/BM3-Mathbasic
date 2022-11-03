@@ -16,15 +16,15 @@
 
 using namespace mocoder;
 
-std::string Compile(const std::string &source) {
-  //std::cout<<source<<std::endl;
+void Compile(const std::string &source) {
   Lexer lex;
-  Lexer::TokenList lst=lex.Lex(source);
+  Lexer::TokenList lst = lex.Lex(source);
+  if (!lex.success_) {
+    return;
+  }
   Parser parse(lst);
   std::shared_ptr<ASTNode> node=parse.Parse();
-  //node->PrintTree(0);
   if (parse.success_) {
     node->Eval();
   }
-  return node->GenJS();
 }

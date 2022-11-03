@@ -12,7 +12,6 @@
 #ifndef ASTNODE_H_
 #define ASTNODE_H_
 
-//#define DEBUG_MODE
 
 #include <memory>
 #include <string>
@@ -33,12 +32,7 @@ public:
   virtual std::string ExportASTAsJson()=delete;
   virtual void PrintTree(int depth)=0;
 
-  //virtual double GetVal();
-  //virtual double Value();
-
   virtual void Eval() = 0;
-
-  //virtual std::unordered_map<std::string, double>& GetVars();
 
   ASTNode(){}
   virtual ~ASTNode(){}
