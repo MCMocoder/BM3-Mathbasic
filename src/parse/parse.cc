@@ -46,7 +46,7 @@ Ptr<Number> Parser::ParseNumber() {
 Ptr<Valexpr> Parser::ParseParenExpr() {
   ConsumeToken();  // LBRACKET
   Ptr<Valexpr> result = ParseAddExprTop();
-  if (curtok_.first == Lexer::LBRACKET) {
+  if (curtok_.first == Lexer::RBRACKET) {
     ConsumeToken();  // RBRACKET
     return result;
   } else {

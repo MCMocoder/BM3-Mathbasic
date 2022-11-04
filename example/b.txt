@@ -1,6 +1,3 @@
-i=2
-WHILE i>-1
 INPUT i
-PRINT i^i
-WEND
+PRINT i
 END

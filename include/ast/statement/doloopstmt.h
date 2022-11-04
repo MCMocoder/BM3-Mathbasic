@@ -64,7 +64,7 @@ public:
       for (auto i : stmts_) {
         i->Eval();
       }
-    } while (cond_->EvalCond());
+    } while (!cond_->EvalCond());
     Vars::GetVars().ExitScope();
   }
 };
