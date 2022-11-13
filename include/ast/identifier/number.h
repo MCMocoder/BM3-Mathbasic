@@ -9,17 +9,17 @@
  *
  */
 
-#ifndef NUMBER_H_
-#define NUMBER_H_
+#pragma once
+
+#include <string>
 
 #include "ast/astnode.h"
 #include "ast/expression/valexpr.h"
 #include "lex/lexer.h"
-#include <string>
 
 namespace mocoder {
 class Number : public Valexpr {
-public:
+ public:
   double val_;
   Number(const double &val) : val_(val) {}
   virtual void PrintTree(int depth) override {
@@ -31,9 +31,7 @@ public:
     std::cout << std::endl;
   }
   virtual std::string GenJS() override { return std::to_string(val_); }
-  virtual double EvalVal() override { return val_; }
-  virtual void Eval() override {}
+  virtual double EvalVal(Ptr<Vars> v) override { return val_; }
+  virtual void Eval(Ptr<Vars> v) override {}
 };
-} // namespace mocoder
-
-#endif
+}  // namespace mocoder

@@ -9,8 +9,7 @@
  *
  */
 
-#ifndef CONDEXPR_H_
-#define CONDEXPR_H_
+#pragma once
 
 #include "ast/astnode.h"
 #include "ast/expression/valexpr.h"
@@ -18,7 +17,7 @@
 
 namespace mocoder {
 class Condexpr : public ASTNode {
-public:
+ public:
   int oper_;
   Ptr<Valexpr> lexpr_;
   Ptr<Valexpr> rexpr_;
@@ -31,23 +30,23 @@ public:
     std::cout << depth << ":"
               << "Condexpr(oper=";
     switch (oper_) {
-    case Lexer::GREATEREQUAL:
-      std::cout << ">=";
-      break;
-    case Lexer::GREATER:
-      std::cout << ">";
-      break;
-    case Lexer::LESSEQUAL:
-      std::cout << "<=";
-      break;
-    case Lexer::LESS:
-      std::cout << "<";
-      break;
-    case Lexer::NOEQUAL:
-      std::cout << "!=";
-      break;
-    case Lexer::EQUAL:
-      std::cout << "===";
+      case Lexer::GREATEREQUAL:
+        std::cout << ">=";
+        break;
+      case Lexer::GREATER:
+        std::cout << ">";
+        break;
+      case Lexer::LESSEQUAL:
+        std::cout << "<=";
+        break;
+      case Lexer::LESS:
+        std::cout << "<";
+        break;
+      case Lexer::NOEQUAL:
+        std::cout << "!=";
+        break;
+      case Lexer::EQUAL:
+        std::cout << "===";
     }
     std::cout << ")";
     std::cout << std::endl;
@@ -58,46 +57,44 @@ public:
     std::string result;
     result += lexpr_->GenJS();
     switch (oper_) {
-    case Lexer::GREATEREQUAL:
-      result += ">=";
-      break;
-    case Lexer::GREATER:
-      result += ">";
-      break;
-    case Lexer::LESSEQUAL:
-      result += "<=";
-      break;
-    case Lexer::LESS:
-      result += "<";
-      break;
-    case Lexer::NOEQUAL:
-      result += "!=";
-      break;
-    case Lexer::EQUAL:
-      result += "===";
+      case Lexer::GREATEREQUAL:
+        result += ">=";
+        break;
+      case Lexer::GREATER:
+        result += ">";
+        break;
+      case Lexer::LESSEQUAL:
+        result += "<=";
+        break;
+      case Lexer::LESS:
+        result += "<";
+        break;
+      case Lexer::NOEQUAL:
+        result += "!=";
+        break;
+      case Lexer::EQUAL:
+        result += "===";
     }
     result += rexpr_->GenJS();
     return result;
   }
-  virtual bool EvalCond() {
+  virtual bool EvalCond(Ptr<Vars> v) {
     switch (oper_) {
-    case Lexer::GREATEREQUAL:
-      return lexpr_->EvalVal()>=rexpr_->EvalVal();
-    case Lexer::GREATER:
-      return lexpr_->EvalVal()>rexpr_->EvalVal();
-    case Lexer::LESSEQUAL:
-      return lexpr_->EvalVal()<=rexpr_->EvalVal();
-    case Lexer::LESS:
-      return lexpr_->EvalVal()<rexpr_->EvalVal();
-    case Lexer::NOEQUAL:
-      return lexpr_->EvalVal()!=rexpr_->EvalVal();
-    case Lexer::EQUAL:
-      return lexpr_->EvalVal()==rexpr_->EvalVal();
+      case Lexer::GREATEREQUAL:
+        return lexpr_->EvalVal(v) >= rexpr_->EvalVal(v);
+      case Lexer::GREATER:
+        return lexpr_->EvalVal(v) > rexpr_->EvalVal(v);
+      case Lexer::LESSEQUAL:
+        return lexpr_->EvalVal(v) <= rexpr_->EvalVal(v);
+      case Lexer::LESS:
+        return lexpr_->EvalVal(v) < rexpr_->EvalVal(v);
+      case Lexer::NOEQUAL:
+        return lexpr_->EvalVal(v) != rexpr_->EvalVal(v);
+      case Lexer::EQUAL:
+        return lexpr_->EvalVal(v) == rexpr_->EvalVal(v);
     }
     return false;
   }
-  virtual void Eval() override {}
+  virtual void Eval(Ptr<Vars> v) override {}
 };
-} // namespace mocoder
-
-#endif
+}  // namespace mocoder

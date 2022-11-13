@@ -9,8 +9,7 @@
  *
  */
 
-#ifndef LEXER_H_
-#define LEXER_H_
+#pragma once
 
 #include <list>
 #include <map>
@@ -19,7 +18,7 @@
 
 namespace mocoder {
 class Lexer {
-public:
+ public:
   enum TokenType {
     IDENTIFIER,
     NUMBER,
@@ -44,8 +43,8 @@ public:
   typedef std::list<std::pair<TokenType, std::string>> TokenList;
   typedef std::pair<TokenType, std::string> Token;
   int linenum_ = 1;
-  bool success_=true;
-  
+  bool success_ = true;
+
   int lexbegin = 0;
 
   Token LexIdentifier(const std::string &source);
@@ -54,6 +53,4 @@ public:
   TokenList Lex(const std::string &source);
 };
 
-} // namespace mocoder
-
-#endif
+}  // namespace mocoder

@@ -9,25 +9,33 @@
  *
  */
 
-#ifndef ROOTNODE_H_
-#define ROOTNODE_H_
+#pragma once
 
-#include "ast/astnode.h"
-#include "ast/variable.h"
+#include <list>
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
 
+#include "ast/astnode.h"
+#include "ast/function.h"
+#include "ast/statement/defstmt.h"
+#include "ast/variable.h"
 
 namespace mocoder {
 
 class RootNode : public ASTNode {
-public:
+ public:
   std::list<Ptr<ASTNode>> stmts_;
+  std::list<Ptr<DefStmt>> defs_;
   std::unordered_set<std::string> declvars_;
-  std::unordered_map<std::string, double> vals_;
-  RootNode(std::list<Ptr<ASTNode>> &stmts) : stmts_(std::move(stmts)) {}
+  RootNode(std::list<Ptr<ASTNode>> &stmts) : stmts_(std::move(stmts)) {
+    for (auto i=stmts_.begin();i!=stmts_.end();++i) {
+      if ((*i)->IsDef()) {
+        defs_.push_back(Ptr<DefStmt>((DefStmt *)(i->get())));
+      }
+    }
+  }
 
   virtual void PrintTree(int depth) override {
     for (int i = 0; i < depth; ++i) {
@@ -53,14 +61,16 @@ public:
     return result;
   }
 
-  virtual void Eval() override {
-    Vars::GetVars().EnterScope(declvars_);
+  virtual void Eval(Ptr<Vars> v) override {
+    v=Ptr<Vars>(new Vars());
+    v->EnterScope(declvars_);
+    for (auto i : defs_) {
+      Funcs::Get().AddFunc(i);
+    }
     for (auto i : stmts_) {
-      i->Eval();
+      i->Eval(v);
     }
   }
 };
 
-} // namespace mocoder
-
-#endif
+}  // namespace mocoder

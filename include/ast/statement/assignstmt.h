@@ -9,8 +9,7 @@
  *
  */
 
-#ifndef ASSIGNSTMT_H_
-#define ASSIGNSTMT_H_
+#pragma once
 
 #include "ast/astnode.h"
 #include "ast/expression/valexpr.h"
@@ -43,10 +42,8 @@ class AssignStmt : public ASTNode {
     return result;
   }
   virtual double Value() { return 0; }
-  virtual void Eval() override {
-    Vars::GetVars().SetVal(var_->name_, expr_->EvalVal());
+  virtual void Eval(Ptr<Vars> v) override {
+    v->SetVal(var_->name_, expr_->EvalVal(v));
   }
 };
 }  // namespace mocoder
-
-#endif

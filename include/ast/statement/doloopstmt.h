@@ -9,19 +9,18 @@
  *
  */
 
-#ifndef DOLOOPSTMT_H_
-#define DOLOOPSTMT_H_
+#pragma once
+
+#include <list>
 
 #include "ast/astnode.h"
 #include "ast/expression/condexpr.h"
 #include "ast/variable.h"
 #include "lex/lexer.h"
-#include <list>
-
 
 namespace mocoder {
 class DoLoopStmt : public ASTNode {
-public:
+ public:
   Ptr<Condexpr> cond_;
   std::list<Ptr<ASTNode>> stmts_;
   std::unordered_set<std::string> declvars_;
@@ -58,16 +57,14 @@ public:
     return result;
   }
 
-  virtual void Eval() override {
-    Vars::GetVars().EnterScope(declvars_);
+  virtual void Eval(Ptr<Vars> v) override {
+    v->EnterScope(declvars_);
     do {
       for (auto i : stmts_) {
-        i->Eval();
+        i->Eval(v);
       }
-    } while (!cond_->EvalCond());
-    Vars::GetVars().ExitScope();
+    } while (!cond_->EvalCond(v));
+    v->ExitScope();
   }
 };
-} // namespace mocoder
-
-#endif
+}  // namespace mocoder

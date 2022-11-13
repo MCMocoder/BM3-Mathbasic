@@ -1,3 +1,8 @@
-INPUT i
-PRINT i
+DEF add(a,b)
+RET a+b
+ENDDEF
+
+INPUT i,j
+b=add(i,j)
+PRINT (b+3)/7
 END

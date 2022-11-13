@@ -9,16 +9,15 @@
  *
  */
 
-#ifndef CALLFUNCEXPR_H_
-#define CALLFUNCEXPR_H_
+#pragma once
 
 #include <cmath>
 
 #include "ast/astnode.h"
 #include "ast/expression/valexpr.h"
 #include "ast/expression/valexprlist.h"
+#include "ast/function.h"
 #include "ast/identifier/identifier.h"
-
 
 namespace mocoder {
 class CallFuncExpr : public Valexpr {
@@ -45,25 +44,24 @@ class CallFuncExpr : public Valexpr {
     result += ")";
     return result;
   }
-  virtual double EvalVal() override {
+  virtual double EvalVal(Ptr<Vars> v) override {
     if (name_ == "cos") {
-      return cos((*(params_->exprs_.begin()))->EvalVal());
+      return cos((*(params_->exprs_.begin()))->EvalVal(v));
     } else if (name_ == "sin") {
-      return sin((*(params_->exprs_.begin()))->EvalVal());
+      return sin((*(params_->exprs_.begin()))->EvalVal(v));
     } else if (name_ == "tan") {
-      return tan((*(params_->exprs_.begin()))->EvalVal());
+      return tan((*(params_->exprs_.begin()))->EvalVal(v));
     } else if (name_ == "ln") {
-      return log((*(params_->exprs_.begin()))->EvalVal());
+      return log((*(params_->exprs_.begin()))->EvalVal(v));
     } else if (name_ == "lg") {
-      return log10((*(params_->exprs_.begin()))->EvalVal());
+      return log10((*(params_->exprs_.begin()))->EvalVal(v));
     } else if (name_ == "log") {
-      return log((*(params_->exprs_.begin()))->EvalVal()) /
-             log((*(std::next(params_->exprs_.begin(), 1)))->EvalVal());
+      return log((*(params_->exprs_.begin()))->EvalVal(v)) /
+             log((*(std::next(params_->exprs_.begin(), 1)))->EvalVal(v));
+    } else {
+      return Funcs::Get().GetFunc(name_)->EvalFunc(params_,v);
     }
-    return 0.0;
   }
-  virtual void Eval() override {}
+  virtual void Eval(Ptr<Vars> v) override {}
 };
 }  // namespace mocoder
-
-#endif

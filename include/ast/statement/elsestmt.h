@@ -9,21 +9,20 @@
  *
  */
 
-#ifndef ELSESTMT_H_
-#define ELSESTMT_H_
+#pragma once
+
+#include <list>
+#include <string>
+#include <unordered_set>
 
 #include "ast/astnode.h"
 #include "ast/expression/condexpr.h"
 #include "ast/variable.h"
 #include "lex/lexer.h"
-#include <list>
-#include <string>
-#include <unordered_set>
-
 
 namespace mocoder {
 class ElseStmt : public ASTNode {
-public:
+ public:
   std::list<Ptr<ASTNode>> stmts_;
   std::unordered_set<std::string> declvars_;
   ElseStmt(std::list<Ptr<ASTNode>> &stmts) : stmts_(std::move(stmts)) {}
@@ -55,14 +54,12 @@ public:
     return result;
   }
 
-  virtual void Eval() override {
-    Vars::GetVars().EnterScope(declvars_);
+  virtual void Eval(Ptr<Vars> v) override {
+    v->EnterScope(declvars_);
     for (auto i : stmts_) {
-      i->Eval();
+      i->Eval(v);
     }
-    Vars::GetVars().ExitScope();
+    v->ExitScope();
   }
 };
-} // namespace mocoder
-
-#endif
+}  // namespace mocoder

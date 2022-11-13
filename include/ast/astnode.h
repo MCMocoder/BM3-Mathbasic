@@ -9,34 +9,32 @@
  *
  */
 
-#ifndef ASTNODE_H_
-#define ASTNODE_H_
+#pragma once
 
-
+#include <iostream>
+#include <list>
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
-#include <list>
-#include <iostream>
+
+#include "ast/variable.h"
+
 
 namespace mocoder {
 
-template<typename T>
-using Ptr=std::shared_ptr<T>;
+template <typename T>
+using Ptr = std::shared_ptr<T>;
 
-class ASTNode: public std::enable_shared_from_this<ASTNode> {
-public:
+class ASTNode {
+ public:
+  virtual std::string GenJS() = 0;
+  virtual std::string ExportASTAsJson() = delete;
+  virtual void PrintTree(int depth) = 0;
+  virtual void Eval(Ptr<Vars> v) = 0;
+  virtual bool IsDef() { return false; };
 
-  virtual std::string GenJS()=0;
-  virtual std::string ExportASTAsJson()=delete;
-  virtual void PrintTree(int depth)=0;
-
-  virtual void Eval() = 0;
-
-  ASTNode(){}
-  virtual ~ASTNode(){}
+  ASTNode() {}
+  virtual ~ASTNode() {}
 };
-} // namespace mocoder
-
-#endif
+}  // namespace mocoder

@@ -9,21 +9,20 @@
  *
  */
 
-#ifndef IFSTMT_H_
-#define IFSTMT_H_
+#pragma once
+
+#include <list>
+#include <string>
+#include <unordered_set>
 
 #include "ast/astnode.h"
 #include "ast/expression/condexpr.h"
 #include "ast/statement/elsestmt.h"
 #include "lex/lexer.h"
-#include <list>
-#include <string>
-#include <unordered_set>
-
 
 namespace mocoder {
 class IfStmt : public ASTNode {
-public:
+ public:
   Ptr<Condexpr> cond_;
   std::list<Ptr<ASTNode>> stmts_;
   Ptr<ElseStmt> else_;
@@ -71,18 +70,16 @@ public:
     return result;
   }
 
-  virtual void Eval() override {
-    if (cond_->EvalCond()) {
-      Vars::GetVars().EnterScope(declvars_);
+  virtual void Eval(Ptr<Vars> v) override {
+    if (cond_->EvalCond(v)) {
+      v->EnterScope(declvars_);
       for (auto i : stmts_) {
-        i->Eval();
+        i->Eval(v);
       }
-      Vars::GetVars().ExitScope();
+      v->ExitScope();
     } else if (else_ != nullptr) {
-      else_->Eval();
+      else_->Eval(v);
     }
   }
 };
-} // namespace mocoder
-
-#endif
+}  // namespace mocoder

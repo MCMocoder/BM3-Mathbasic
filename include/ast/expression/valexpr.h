@@ -9,14 +9,12 @@
  *
  */
 
-#ifndef VALEXPR_H_
-#define VALEXPR_H_
+#pragma once
 
 #include <cstdint>
 
 #include "ast/astnode.h"
 #include "lex/lexer.h"
-
 
 namespace mocoder {
 class Valexpr : public ASTNode {
@@ -82,21 +80,21 @@ class Valexpr : public ASTNode {
     return result;
   }
 
-  virtual double EvalVal() {
+  virtual double EvalVal(Ptr<Vars> v) {
     switch (oper_) {
       case Lexer::ADD:
-        return lchild_->EvalVal() + rchild_->EvalVal();
+        return lchild_->EvalVal(v) + rchild_->EvalVal(v);
       case Lexer::SUB:
         if (lchild_.get() == nullptr) {
-          return -rchild_->EvalVal();
+          return -rchild_->EvalVal(v);
         }
-        return lchild_->EvalVal() - rchild_->EvalVal();
+        return lchild_->EvalVal(v) - rchild_->EvalVal(v);
       case Lexer::MUL:
-        return lchild_->EvalVal() * rchild_->EvalVal();
+        return lchild_->EvalVal(v) * rchild_->EvalVal(v);
       case Lexer::DIV:
-        return lchild_->EvalVal() / rchild_->EvalVal();
+        return lchild_->EvalVal(v) / rchild_->EvalVal(v);
       case Lexer::POW:
-        return IntPow(lchild_->EvalVal(), (int)(rchild_->EvalVal()));
+        return IntPow(lchild_->EvalVal(v), (int)(rchild_->EvalVal(v)));
     }
     return 0.0;
   }
@@ -129,9 +127,8 @@ class Valexpr : public ASTNode {
       return 1 / res;
     }
   }
-  virtual void Eval() override {}
+  virtual void Eval(Ptr<Vars> v) override {}
+
 };
 
 }  // namespace mocoder
-
-#endif

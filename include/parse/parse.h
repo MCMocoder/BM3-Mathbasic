@@ -9,13 +9,9 @@
  *
  */
 
-#ifndef PARSE_H_
-#define PARSE_H_
+#pragma once
 
-#include "ast/nodes.h"
-#include "ast/statement/doloopstmt.h"
-#include "ast/statement/ifstmt.h"
-#include "lex/lexer.h"
+#include <exception>
 #include <iostream>
 #include <list>
 #include <map>
@@ -25,6 +21,12 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+
+#include "ast/nodes.h"
+#include "ast/statement/defstmt.h"
+#include "ast/statement/doloopstmt.h"
+#include "ast/statement/ifstmt.h"
+#include "lex/lexer.h"
 
 namespace mocoder {
 
@@ -41,7 +43,7 @@ inline std::string ToLowerCase(const std::string &str) {
 }
 
 class Parser {
-public:
+ public:
   using TokenList = Lexer::TokenList;
   using Token = Lexer::Token;
 
@@ -52,7 +54,7 @@ public:
   bool eof_ = false;
   long linenum_ = 0;
   std::list<std::unordered_set<std::string>> curscope_;
-  bool success_=true;
+  bool success_ = true;
 
   void ConsumeToken() {
     ++iter_;
@@ -67,16 +69,14 @@ public:
 
   void ExitScope() { curscope_.pop_front(); }
 
-  void AddVar(const std::string &varname) {
-    curscope_.front().insert(varname);
-  }
+  void AddVar(const std::string &varname) { curscope_.front().insert(varname); }
 
   Ptr<Identifier> ParseIdentifier();
   Ptr<Number> ParseNumber();
   Ptr<Valexpr> ParseParenExpr();
   Ptr<Valexpr> ParseIdExpr();
   Ptr<ValexprList> ParseValExprList();
-  void ParseIdentifierList(Ptr<InputStmt> input);
+  std::list<Ptr<Identifier>> ParseIdentifierList();
   Ptr<Valexpr> ParsePrimaryExpr();
   Ptr<Valexpr> ParseAddExprTop();
   Ptr<Valexpr> ParsePowExpr();
@@ -89,6 +89,9 @@ public:
   Ptr<IfStmt> ParseIfStmt();
   Ptr<WhileStmt> ParseWhileStmt();
   Ptr<DoLoopStmt> ParseDoLoopStmt();
+  Ptr<DefStmt> ParseDefStmt();
+  Ptr<CallFuncExpr> ParseCallFuncExpr(std::string& id);
+  Ptr<RetStmt> ParseRetStmt();
   std::list<Ptr<ASTNode>> ParseTop();
   std::shared_ptr<RootNode> Parse();
 
@@ -104,10 +107,13 @@ static const std::unordered_map<std::string, int /*ParamNum*/> funcmap =
         {{"cos", 1}, {"sin", 1}, {"tan", 1}, {"lg", 1}, {"ln", 1}, {"log", 2}});
 
 class Sema {
-public:
+ public:
   static bool SearchVar(const std::string &varname, const Parser *psr) {
     for (const std::unordered_set<std::string> &scope : psr->curscope_) {
       if (scope.count(varname) != 0) {
+        if (ToLowerCase(varname) == "paimon") {
+          std::cout << "Ehe Te Nandayo" << std::endl;
+        }
         return true;
       }
     }
@@ -115,6 +121,4 @@ public:
   }
 };
 
-} // namespace mocoder
-
-#endif
+}  // namespace mocoder

@@ -9,24 +9,20 @@
  *
  */
 
-#ifndef INPUTSTMT_H_
-#define INPUTSTMT_H_
+#pragma once
 
 #include "ast/astnode.h"
 #include "ast/identifier/identifier.h"
 #include "ast/variable.h"
 #include "lex/lexer.h"
 
-
 namespace mocoder {
 class InputStmt : public ASTNode {
-public:
+ public:
   std::list<Ptr<Identifier>> vars_;
   InputStmt() {}
 
-  void AddVar(Ptr<Identifier> id) {
-    vars_.push_back(id);
-  }
+  void AddVar(Ptr<Identifier> id) { vars_.push_back(id); }
 
   virtual void PrintTree(int depth) override {
     for (int i = 0; i < depth; ++i) {
@@ -48,14 +44,12 @@ public:
     return result;
   }
 
-  virtual void Eval() override {
+  virtual void Eval(Ptr<Vars> v) override {
     for (auto i : vars_) {
       double d;
       scanf("%lf", &d);
-      Vars::GetVars().SetVal(i->name_, d);
+      v->SetVal(i->name_, d);
     }
   }
 };
-} // namespace mocoder
-
-#endif
+}  // namespace mocoder

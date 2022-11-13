@@ -54,28 +54,32 @@ Ptr<Valexpr> Parser::ParseParenExpr() {
   }
 }
 
+Ptr<CallFuncExpr> Parser::ParseCallFuncExpr(std::string& id) {
+  ConsumeToken();  // LBRACKET
+
+  /*if (funcmap.count(id) == 0) {
+    std::__throw_logic_error("Use of undeclared function");
+  }*/
+
+  Ptr<CallFuncExpr> result(new CallFuncExpr(id, ParseValExprList()));
+
+  /*if (result->params_->exprs_.size() != funcmap.find(id)->second) {
+    std::__throw_logic_error("Unexpected Param Number");
+  }*/
+
+  if (curtok_.first != Lexer::RBRACKET) {
+    std::__throw_logic_error("Expected ')'");
+  }
+  ConsumeToken();  // RBRACKET
+  return result;
+}
+
 Ptr<Valexpr> Parser::ParseIdExpr() {
   std::string id = curtok_.second;
   ConsumeToken();  // Identifier
   if (curtok_.first == Lexer::LBRACKET) {
     // FuncCall
-    ConsumeToken();  // LBRACKET
-
-    if (funcmap.count(id) == 0) {
-      std::__throw_logic_error("Use of undeclared function");
-    }
-
-    Ptr<CallFuncExpr> result(new CallFuncExpr(id, ParseValExprList()));
-
-    if (result->params_->exprs_.size() != funcmap.find(id)->second) {
-      std::__throw_logic_error("Unexpected Param Number");
-    }
-
-    if (curtok_.first != Lexer::RBRACKET) {
-      std::__throw_logic_error("Expected ')'");
-    }
-    ConsumeToken();  // RBRACKET
-    return result;
+    return ParseCallFuncExpr(id);
   } else {
     // Variable(Identifier)
     Ptr<Identifier> result(new Identifier(id));
@@ -103,7 +107,8 @@ Ptr<ValexprList> Parser::ParseValExprList() {
   }
 }
 
-void Parser::ParseIdentifierList(Ptr<InputStmt> input) {
+std::list<Ptr<Identifier>> Parser::ParseIdentifierList() {
+  std::list<Ptr<Identifier>> result;
   while (true) {
     Ptr<Identifier> curid(new Identifier(curtok_.second));
     ConsumeToken();  // IDENTIFIER
@@ -112,9 +117,9 @@ void Parser::ParseIdentifierList(Ptr<InputStmt> input) {
       AddVar(curid->name_);
     }
 
-    input->AddVar(curid);
+    result.push_back(curid);
     if (curtok_.first != Lexer::COMMA) {
-      return;
+      return result;
     }
     ConsumeToken();  // COMMA
     if (eof_) {
@@ -132,7 +137,7 @@ Ptr<Valexpr> Parser::ParsePrimaryExpr() {
     case Lexer::LBRACKET:
       return ParseParenExpr();
     default:
-      std::__throw_logic_error("Unexpected Expression");
+      return nullptr;
   }
 }
 
@@ -207,7 +212,8 @@ Ptr<AssignStmt> Parser::ParseAssignStmt() {
 Ptr<InputStmt> Parser::ParseInputStmt() {
   ConsumeToken();  // INPUT
   Ptr<InputStmt> res(new InputStmt());
-  ParseIdentifierList(res);
+  std::list<Ptr<Identifier>> ids = ParseIdentifierList();
+  res->vars_ = ids;
   return res;
 }
 
@@ -286,6 +292,39 @@ Ptr<DoLoopStmt> Parser::ParseDoLoopStmt() {
   return result;
 }
 
+Ptr<RetStmt> Parser::ParseRetStmt() {
+  ConsumeToken();  // RET
+  return Ptr<RetStmt>(new RetStmt(ParseAddExprTop()));
+}
+
+Ptr<DefStmt> Parser::ParseDefStmt() {
+  ConsumeToken();  // DEF
+  if (curtok_.first != Lexer::IDENTIFIER) {
+    std::__throw_logic_error("Expected IDENTIFIER(Function name)");
+  }
+  std::string name = curtok_.second;
+  ConsumeToken();  // IDENTIFIER
+  if (curtok_.first != Lexer::LBRACKET) {
+    std::__throw_logic_error("Expected (");
+  }
+  ConsumeToken();  // LBRACKET
+  EnterScope();
+  std::list<Ptr<Identifier>> ids = ParseIdentifierList();
+  if (curtok_.first != Lexer::RBRACKET) {
+    std::__throw_logic_error("Expected )");
+  }
+  ConsumeToken();  // RBRACKET
+  std::list<Ptr<ASTNode>> nodes = ParseTop();
+  if (curtok_.second != "ENDDEF") {
+    std::__throw_logic_error("Expected ENDDEF");
+  }
+  ConsumeToken();  // ENDDEF
+  Ptr<DefStmt> result(new DefStmt(nodes, name, ids));
+  result->declvars_ = curscope_.front();
+  ExitScope();
+  return result;
+}
+
 std::list<Ptr<ASTNode>> Parser::ParseTop() {
   std::list<Ptr<ASTNode>> result;
   while (!eof_ || curtok_.second == "END" || curtok_.first == Lexer::NEWLINE) {
@@ -300,6 +339,10 @@ std::list<Ptr<ASTNode>> Parser::ParseTop() {
         result.push_back(ParseInputStmt());
       } else if (curtok_.second == "PRINT") {
         result.push_back(ParsePrintStmt());
+      } else if (curtok_.second == "DEF") {
+        result.push_back(ParseDefStmt());
+      } else if (curtok_.second == "RET") {
+        result.push_back(ParseRetStmt());
       } else if (curtok_.second == "END" || eof_) {
         if (curtok_.second != "END") {
           std::__throw_logic_error("Expected END");
@@ -310,7 +353,7 @@ std::list<Ptr<ASTNode>> Parser::ParseTop() {
         }
         return result;
       } else if (curtok_.second == "WEND" || curtok_.second == "LOOPUNTIL" ||
-                 curtok_.second == "ELSE") {
+                 curtok_.second == "ELSE" || curtok_.second == "ENDDEF") {
         return result;
       } else if (curtok_.first == Lexer::NEWLINE) {
         ConsumeToken();
@@ -319,7 +362,7 @@ std::list<Ptr<ASTNode>> Parser::ParseTop() {
       } else {
         result.push_back(ParseAssignStmt());
       }
-    } catch (std::logic_error &error) {
+    } catch (std::logic_error& error) {
       std::cout << "Line " << linenum_ + 1 << " : " << error.what()
                 << std::endl;
 
@@ -327,7 +370,7 @@ std::list<Ptr<ASTNode>> Parser::ParseTop() {
         ConsumeToken();
       }
       ConsumeToken();  // NEWLINE
-      success_=false;
+      success_ = false;
     }
   }
   std::__throw_logic_error("Unexpected EOF");
@@ -335,8 +378,10 @@ std::list<Ptr<ASTNode>> Parser::ParseTop() {
 
 std::shared_ptr<RootNode> Parser::Parse() {
   std::list<Ptr<ASTNode>> stmts = ParseTop();
+  EnterScope();
   Ptr<RootNode> node(new RootNode(stmts));
   node->declvars_ = curscope_.front();
+  ExitScope();
   return node;
 }
 

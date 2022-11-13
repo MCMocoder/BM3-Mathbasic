@@ -9,18 +9,17 @@
  *
  */
 
-#ifndef WHILESTMT_H_
-#define WHILESTMT_H_
+#pragma once
+
+#include <list>
 
 #include "ast/astnode.h"
 #include "ast/expression/condexpr.h"
 #include "lex/lexer.h"
-#include <list>
-
 
 namespace mocoder {
 class WhileStmt : public ASTNode {
-public:
+ public:
   Ptr<Condexpr> cond_;
   std::list<Ptr<ASTNode>> stmts_;
   std::unordered_set<std::string> declvars_;
@@ -57,14 +56,12 @@ public:
     return result;
   }
 
-  virtual void Eval() override {
-    while (cond_->EvalCond()) {
+  virtual void Eval(Ptr<Vars> v) override {
+    while (cond_->EvalCond(v)) {
       for (auto i : stmts_) {
-        i->Eval();
+        i->Eval(v);
       }
     }
   }
 };
-} // namespace mocoder
-
-#endif
+}  // namespace mocoder

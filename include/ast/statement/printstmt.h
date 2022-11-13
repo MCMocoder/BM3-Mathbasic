@@ -9,19 +9,18 @@
  *
  */
 
-#ifndef PRINTSTMT_H_
-#define PRINTSTMT_H_
+#pragma once
+
+#include <iostream>
+#include <string>
 
 #include "ast/astnode.h"
 #include "ast/expression/valexprlist.h"
 #include "lex/lexer.h"
-#include <iostream>
-#include <string>
-
 
 namespace mocoder {
 class PrintStmt : public ASTNode {
-public:
+ public:
   Ptr<ValexprList> exprs_;
   PrintStmt(Ptr<ValexprList> exprs) : exprs_(exprs) {}
 
@@ -44,13 +43,11 @@ public:
     return result;
   }
 
-  virtual void Eval() override {
-    std::list<double> vals = exprs_->EvalVList();
+  virtual void Eval(Ptr<Vars> v) override {
+    std::list<double> vals = exprs_->EvalVList(v);
     for (auto i : vals) {
-      printf("%lf\n",i);
+      printf("%lf\n", i);
     }
   }
 };
-} // namespace mocoder
-
-#endif
+}  // namespace mocoder
