@@ -53,13 +53,17 @@ class ElseStmt : public ASTNode {
     result += "}";
     return result;
   }
-
   virtual void Eval(Ptr<Vars> v) override {
     v->EnterScope(declvars_);
     for (auto i : stmts_) {
       i->Eval(v);
     }
     v->ExitScope();
+  }
+  virtual void GenVM(Ptr<Vars> v, vector<Op> &ops) override {
+    for (auto i : stmts_) {
+      i->GenVM(v, ops);
+    }
   }
 };
 }  // namespace mocoder

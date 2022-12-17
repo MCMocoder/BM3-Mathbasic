@@ -12,6 +12,7 @@
 #pragma once
 
 #include <cmath>
+#include <list>
 
 #include "ast/astnode.h"
 #include "ast/expression/valexpr.h"
@@ -24,7 +25,7 @@ class CallFuncExpr : public Valexpr {
  public:
   std::string name_;
   Ptr<ValexprList> params_;
-  CallFuncExpr(std::string &name, Ptr<ValexprList> params)
+  CallFuncExpr(std::string& name, Ptr<ValexprList> params)
       : name_(name), params_(params) {}
   virtual void PrintTree(int depth) override {
     for (int i = 0; i < depth; ++i) {
@@ -59,9 +60,34 @@ class CallFuncExpr : public Valexpr {
       return log((*(params_->exprs_.begin()))->EvalVal(v)) /
              log((*(std::next(params_->exprs_.begin(), 1)))->EvalVal(v));
     } else {
-      return Funcs::Get().GetFunc(name_)->EvalFunc(params_,v);
+      return Funcs::Get().GetFunc(name_)->EvalFunc(params_, v);
     }
   }
   virtual void Eval(Ptr<Vars> v) override {}
+  virtual void GenVM(Ptr<Vars> v, vector<Op>& ops) override {
+    if (name_ == "cos") {
+      (*(params_->exprs_.begin()))->GenVM(v, ops);
+      ops.push_back(Op(OpCode::CALLCOS));
+    } else if (name_ == "sin") {
+      (*(params_->exprs_.begin()))->GenVM(v, ops);
+      ops.push_back(Op(OpCode::CALLSIN));
+    } else if (name_ == "tan") {
+      (*(params_->exprs_.begin()))->GenVM(v, ops);
+      ops.push_back(Op(OpCode::CALLTAN));
+    } else if (name_ == "ln") {
+      (*(params_->exprs_.begin()))->GenVM(v, ops);
+      ops.push_back(Op(OpCode::CALLLN));
+    } else if (name_ == "lg") {
+      (*(params_->exprs_.begin()))->GenVM(v, ops);
+      ops.push_back(Op(OpCode::CALLLG));
+    } else if (name_ == "log") {
+      (*(params_->exprs_.begin()))->GenVM(v, ops);
+      (*(std::next(params_->exprs_.begin(), 1)))->GenVM(v,ops);
+      ops.push_back(Op(OpCode::CALLLOG));
+    } else {
+      params_->GenVM(v, ops);
+      ops.push_back(Op(OpCode::CALL, name_));
+    }
+  }
 };
 }  // namespace mocoder

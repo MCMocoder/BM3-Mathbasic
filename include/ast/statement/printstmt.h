@@ -42,11 +42,16 @@ class PrintStmt : public ASTNode {
     }
     return result;
   }
-
   virtual void Eval(Ptr<Vars> v) override {
     std::list<double> vals = exprs_->EvalVList(v);
     for (auto i : vals) {
       printf("%lf\n", i);
+    }
+  }
+  virtual void GenVM(Ptr<Vars> v, vector<Op> &ops) override {
+    for (auto i : exprs_->exprs_) {
+      i->GenVM(v, ops);
+      ops.push_back(Op(OpCode::PRINT));
     }
   }
 };

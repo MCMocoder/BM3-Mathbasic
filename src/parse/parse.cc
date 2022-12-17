@@ -57,15 +57,15 @@ Ptr<Valexpr> Parser::ParseParenExpr() {
 Ptr<CallFuncExpr> Parser::ParseCallFuncExpr(std::string& id) {
   ConsumeToken();  // LBRACKET
 
-  /*if (funcmap.count(id) == 0) {
+  if (funcmap.count(id) == 0) {
     std::__throw_logic_error("Use of undeclared function");
-  }*/
+  }
 
   Ptr<CallFuncExpr> result(new CallFuncExpr(id, ParseValExprList()));
 
-  /*if (result->params_->exprs_.size() != funcmap.find(id)->second) {
+  if (result->params_->exprs_.size() != funcmap.find(id)->second) {
     std::__throw_logic_error("Unexpected Param Number");
-  }*/
+  }
 
   if (curtok_.first != Lexer::RBRACKET) {
     std::__throw_logic_error("Expected ')'");
@@ -322,6 +322,7 @@ Ptr<DefStmt> Parser::ParseDefStmt() {
   Ptr<DefStmt> result(new DefStmt(nodes, name, ids));
   result->declvars_ = curscope_.front();
   ExitScope();
+  funcmap.emplace(name,ids.size());
   return result;
 }
 

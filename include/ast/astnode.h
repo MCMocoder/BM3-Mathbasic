@@ -19,6 +19,7 @@
 #include <unordered_set>
 
 #include "ast/variable.h"
+#include "vm/vm.h"
 
 
 namespace mocoder {
@@ -32,6 +33,7 @@ class ASTNode {
   virtual std::string ExportASTAsJson() = delete;
   virtual void PrintTree(int depth) = 0;
   virtual void Eval(Ptr<Vars> v) = 0;
+  virtual void GenVM(Ptr<Vars> v, std::vector<Op>& ops) = 0;
   virtual bool IsDef() { return false; };
 
   ASTNode() {}

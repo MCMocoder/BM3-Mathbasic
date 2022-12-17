@@ -99,7 +99,6 @@ class Valexpr : public ASTNode {
     return 0.0;
   }
 
-  // 快速幂算法，来源于我自己的LeetCode解答
   double IntPow(double x, int n) {
     if (n == 0) {
       return 1.0;
@@ -128,7 +127,39 @@ class Valexpr : public ASTNode {
     }
   }
   virtual void Eval(Ptr<Vars> v) override {}
-
+  virtual void GenVM(Ptr<Vars> v, vector<Op>& ops) override {
+    switch (oper_) {
+      case Lexer::ADD:
+        lchild_->GenVM(v,ops);
+        rchild_->GenVM(v, ops);
+        ops.push_back(Op(OpCode::ADD));
+        break;
+      case Lexer::SUB:
+        if (lchild_.get() == nullptr) {
+          ops.push_back(Op(OpCode::PUSH,0));
+        } else {
+          lchild_->GenVM(v,ops);
+        }
+        rchild_->GenVM(v, ops);
+        ops.push_back(Op(OpCode::SUB));
+        break;
+      case Lexer::MUL:
+        lchild_->GenVM(v, ops);
+        rchild_->GenVM(v, ops);
+        ops.push_back(Op(OpCode::MUL));
+        break;
+      case Lexer::DIV:
+        lchild_->GenVM(v, ops);
+        rchild_->GenVM(v, ops);
+        ops.push_back(Op(OpCode::DIV));
+        break;
+      case Lexer::POW:
+        lchild_->GenVM(v, ops);
+        rchild_->GenVM(v, ops);
+        ops.push_back(Op(OpCode::POW));
+        break;
+    }
+  }
 };
 
 }  // namespace mocoder

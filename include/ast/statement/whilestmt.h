@@ -55,13 +55,23 @@ class WhileStmt : public ASTNode {
     result += "}";
     return result;
   }
-
   virtual void Eval(Ptr<Vars> v) override {
     while (cond_->EvalCond(v)) {
       for (auto i : stmts_) {
         i->Eval(v);
       }
     }
+  }
+  virtual void GenVM(Ptr<Vars> v, vector<Op> &ops) override {
+    int looploc=ops.size();
+    cond_->GenVM(v, ops);
+    vector<Op> content;
+    for (auto i : stmts_) {
+      i->GenVM(v, content);
+    }
+    content.push_back(Op(OpCode::JMP, looploc));
+    ops.push_back(Op(OpCode::JZ, ops.size() + content.size() + 1));
+    ops.insert(ops.end(), content.begin(), content.end());
   }
 };
 }  // namespace mocoder

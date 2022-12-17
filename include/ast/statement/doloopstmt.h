@@ -56,7 +56,6 @@ class DoLoopStmt : public ASTNode {
     result += ");";
     return result;
   }
-
   virtual void Eval(Ptr<Vars> v) override {
     v->EnterScope(declvars_);
     do {
@@ -65,6 +64,14 @@ class DoLoopStmt : public ASTNode {
       }
     } while (!cond_->EvalCond(v));
     v->ExitScope();
+  }
+  virtual void GenVM(Ptr<Vars> v, vector<Op> &ops) override {
+    int jmploc = ops.size();
+    for (auto i : stmts_) {
+      i->GenVM(v,ops);
+    }
+    cond_->GenVM(v, ops);
+    ops.push_back(Op(OpCode::JNZ,jmploc));
   }
 };
 }  // namespace mocoder

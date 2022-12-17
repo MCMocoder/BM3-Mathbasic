@@ -102,7 +102,7 @@ class Parser {
   }
 };
 
-static const std::unordered_map<std::string, int /*ParamNum*/> funcmap =
+static std::unordered_map<std::string, int /*ParamNum*/> funcmap =
     std::unordered_map<std::string, int>(
         {{"cos", 1}, {"sin", 1}, {"tan", 1}, {"lg", 1}, {"ln", 1}, {"log", 2}});
 

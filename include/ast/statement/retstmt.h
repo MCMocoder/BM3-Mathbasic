@@ -30,9 +30,10 @@ class RetStmt : public ASTNode {
     val_->PrintTree(depth + 1);
   }
   virtual std::string GenJS() override { return ""; }
-
-  virtual void Eval(Ptr<Vars> v) override {
-    v->retval_=val_->EvalVal(v);
+  virtual void Eval(Ptr<Vars> v) override { v->retval_ = val_->EvalVal(v); }
+  virtual void GenVM(Ptr<Vars> v, vector<Op> &ops) override {
+    val_->GenVM(v, ops);
+    ops.push_back(Op(OpCode::RET));
   }
 };
 

@@ -1,16 +1,20 @@
 /**
  * @file compile.h
  * @author MCMocoder (mcmocoder@mocoder.xyz)
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2022-01-30
- * 
+ *
  * @copyright Copyright (c) 2022 Mocoder Studio
- * 
+ *
  */
 
 #pragma once
 
 #include <string>
 
-void Compile(const std::string& source);
+#include "parse/parse.h"
+
+using namespace mocoder;
+
+std::shared_ptr<RootNode> Compile(const std::string& source);

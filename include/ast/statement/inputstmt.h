@@ -43,12 +43,16 @@ class InputStmt : public ASTNode {
     }
     return result;
   }
-
   virtual void Eval(Ptr<Vars> v) override {
     for (auto i : vars_) {
       double d;
       scanf("%lf", &d);
       v->SetVal(i->name_, d);
+    }
+  }
+  virtual void GenVM(Ptr<Vars> v, vector<Op> &ops) override {
+    for (auto i : vars_) {
+      ops.push_back(Op(OpCode::INPUT, i->name_));
     }
   }
 };

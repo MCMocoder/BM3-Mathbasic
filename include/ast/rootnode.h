@@ -21,6 +21,7 @@
 #include "ast/function.h"
 #include "ast/statement/defstmt.h"
 #include "ast/variable.h"
+#include "vm/vm.h"
 
 namespace mocoder {
 
@@ -30,9 +31,12 @@ class RootNode : public ASTNode {
   std::list<Ptr<DefStmt>> defs_;
   std::unordered_set<std::string> declvars_;
   RootNode(std::list<Ptr<ASTNode>> &stmts) : stmts_(std::move(stmts)) {
-    for (auto i=stmts_.begin();i!=stmts_.end();++i) {
+    for (auto i = stmts_.begin(); i != stmts_.end();) {
       if ((*i)->IsDef()) {
-        defs_.push_back(Ptr<DefStmt>((DefStmt *)(i->get())));
+        defs_.push_back(std::move(std::dynamic_pointer_cast<DefStmt>(*i)));
+        i = stmts_.erase(i);
+      } else {
+        ++i;
       }
     }
   }
@@ -62,7 +66,7 @@ class RootNode : public ASTNode {
   }
 
   virtual void Eval(Ptr<Vars> v) override {
-    v=Ptr<Vars>(new Vars());
+    v = Ptr<Vars>(new Vars());
     v->EnterScope(declvars_);
     for (auto i : defs_) {
       Funcs::Get().AddFunc(i);
@@ -70,6 +74,26 @@ class RootNode : public ASTNode {
     for (auto i : stmts_) {
       i->Eval(v);
     }
+  }
+
+  virtual void GenVM(Ptr<Vars> v, vector<Op> &ops) override {}
+
+  void GenRootVM(vector<Op> &main, map<string, vector<Op>> &funcs) {
+    Ptr<Vars> v = Ptr<Vars>(new Vars());
+    v->EnterScope({});
+    for (auto i : defs_) {
+      vector<Op> fun;
+      i->GenVM(v, fun);
+      funcs.emplace(i->name_, fun);
+    }
+    v->ExitScope();
+    v->EnterScope(declvars_);
+    for (auto i : stmts_) {
+      if (!(i->IsDef())) {
+        i->GenVM(v, main);
+      }
+    }
+    v->ExitScope();
   }
 };
 

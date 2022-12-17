@@ -14,21 +14,18 @@
 #include <iostream>
 
 #include "lex/lexer.h"
-#include "parse/parse.h"
+#include "vm/vm.h"
 
 
 using namespace mocoder;
 
-void Compile(const std::string &source) {
+std::shared_ptr<RootNode> Compile(const std::string &source) {
   Lexer lex;
   Lexer::TokenList lst = lex.Lex(source);
   if (!lex.success_) {
-    return;
+    return nullptr;
   }
   Parser parse(lst);
-  std::shared_ptr<ASTNode> node = parse.Parse();
-  if (parse.success_) {
-    // node->PrintTree(0);
-    node->Eval(nullptr);
-  }
+  std::shared_ptr<RootNode> node = parse.Parse();
+  return parse.success_?node:nullptr;
 }

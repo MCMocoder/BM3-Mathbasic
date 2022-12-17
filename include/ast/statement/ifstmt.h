@@ -69,7 +69,6 @@ class IfStmt : public ASTNode {
     }
     return result;
   }
-
   virtual void Eval(Ptr<Vars> v) override {
     if (cond_->EvalCond(v)) {
       v->EnterScope(declvars_);
@@ -79,6 +78,18 @@ class IfStmt : public ASTNode {
       v->ExitScope();
     } else if (else_ != nullptr) {
       else_->Eval(v);
+    }
+  }
+  virtual void GenVM(Ptr<Vars> v, vector<Op> &ops) override {
+    cond_->GenVM(v, ops);
+    vector<Op> iftrue;
+    for (auto i : stmts_) {
+      i->GenVM(v,iftrue);
+    }
+    ops.push_back(Op(OpCode::JZ, ops.size() + iftrue.size() + 1));
+    ops.insert(ops.end(),iftrue.begin(),iftrue.end());
+    if (else_ != nullptr) {
+      else_->GenVM(v,ops);
     }
   }
 };

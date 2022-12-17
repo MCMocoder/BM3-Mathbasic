@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include <iterator>
 #include <list>
 #include <memory>
 #include <stdexcept>
@@ -53,9 +54,6 @@ class DefStmt : public ASTNode, std::enable_shared_from_this<DefStmt> {
   double EvalFunc(Ptr<ValexprList> argin, Ptr<Vars> pv) {
     Ptr<Vars> v(new Vars());
     std::list<double> argvs = argin->EvalVList(pv);
-    if (args_.size() != argvs.size()) {
-      std::__throw_logic_error("Unexpected Param Number");
-    }
     v->EnterScope(declvars_);
     auto j = argvs.begin();
     for (auto i = args_.begin(); i != args_.end(); ++i) {
@@ -67,6 +65,15 @@ class DefStmt : public ASTNode, std::enable_shared_from_this<DefStmt> {
     }
     v->ExitScope();
     return v->retval_;
+  }
+
+  virtual void GenVM(Ptr<Vars> v, vector<Op> &ops) override {
+    for (auto i = args_.rbegin(); i != args_.rend(); ++i) {
+      ops.push_back(Op(OpCode::STORE,(*i)->name_));
+    }
+    for (auto i : stmts_) {
+      i->GenVM(v,ops);
+    }
   }
 };
 

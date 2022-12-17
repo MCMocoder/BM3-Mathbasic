@@ -14,6 +14,7 @@
 #include "ast/astnode.h"
 #include "ast/expression/valexpr.h"
 #include "lex/lexer.h"
+#include "vm/vm.h"
 
 namespace mocoder {
 class Condexpr : public ASTNode {
@@ -96,5 +97,39 @@ class Condexpr : public ASTNode {
     return false;
   }
   virtual void Eval(Ptr<Vars> v) override {}
+  virtual void GenVM(Ptr<Vars> v, vector<Op>& ops) override {
+    switch (oper_) {
+      case Lexer::GREATEREQUAL:
+        lexpr_->GenVM(v, ops);
+        rexpr_->GenVM(v,ops);
+        ops.push_back(OpCode::MOREEQ);
+        break;
+      case Lexer::GREATER:
+        lexpr_->GenVM(v, ops);
+        rexpr_->GenVM(v, ops);
+        ops.push_back(OpCode::MORE);
+        break;
+      case Lexer::LESSEQUAL:
+        lexpr_->GenVM(v, ops);
+        rexpr_->GenVM(v, ops);
+        ops.push_back(OpCode::LESSEQ);
+        break;
+      case Lexer::LESS:
+        lexpr_->GenVM(v, ops);
+        rexpr_->GenVM(v, ops);
+        ops.push_back(OpCode::LESS);
+        break;
+      case Lexer::NOEQUAL:
+        lexpr_->GenVM(v, ops);
+        rexpr_->GenVM(v, ops);
+        ops.push_back(OpCode::NEQ);
+        break;
+      case Lexer::EQUAL:
+        lexpr_->GenVM(v, ops);
+        rexpr_->GenVM(v, ops);
+        ops.push_back(OpCode::EQ);
+        break;
+    }
+  }
 };
 }  // namespace mocoder

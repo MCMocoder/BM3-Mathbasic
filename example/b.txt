@@ -4,5 +4,11 @@ ENDDEF
 
 INPUT i,j
 b=add(i,j)
-PRINT (b+3)/7
+PRINT (add(i,j)+3)/7
+IF (i+j)>=5 THEN
+PRINT i
+END IF
+WHILE (i+j)<4
+PRINT 3
+WEND
 END

@@ -53,5 +53,10 @@ class ValexprList : public ASTNode {
     return res;
   }
   virtual void Eval(Ptr<Vars> v) override {}
+  virtual void GenVM(Ptr<Vars> v, vector<Op>& ops) override {
+    for (auto i : exprs_) {
+      i->GenVM(v, ops);
+    }
+  }
 };
 }  // namespace mocoder
