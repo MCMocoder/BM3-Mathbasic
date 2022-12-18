@@ -146,7 +146,7 @@ parse.h中的Sema类主要提供变量作用域控制，防止程序出现未定
 
 语法树处理相关的文件位于include/ast文件夹内部。其中astnode.h内的ASTNode类为所有语法树类的父类。语法树处理与其中的GenJS(),PrintTree(),Eval(),GenVM()四个函数有关系。对应js,tree,run,vm四个命令行选项。
 
-GenJS()将语法树翻译为JavaScript代码，若实现了outside.input()以及outside.output()这两个函数，可以将GenJS()生成的JavaScript代码在JavaScript执行环境里运行。
+GenJS()将语法树翻译为JavaScript代码，若实现了outside.input()以及outside.print()这两个函数，可以将GenJS()生成的JavaScript代码在JavaScript执行环境里运行。
 
 PrintTree()可以打印语法树，并通过缩进来生成树形结构。
 
