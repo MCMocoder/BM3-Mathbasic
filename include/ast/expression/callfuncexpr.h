@@ -38,11 +38,46 @@ class CallFuncExpr : public Valexpr {
   }
   virtual std::string GenJS() override {
     std::string result;
-    result += "Math.";  // All Internal functions are from Javascript.Math
-    result += name_;
-    result += "(";
-    result += params_->GenJS();
-    result += ")";
+    if (name_ == "cos") {
+      result += "Math.";
+      result += name_;
+      result += "(";
+      result += params_->GenJS();
+      result += ")";
+    } else if (name_ == "sin") {
+      result += "Math.";
+      result += name_;
+      result += "(";
+      result += params_->GenJS();
+      result += ")";
+    } else if (name_ == "tan") {
+      result += "Math.";
+      result += name_;
+      result += "(";
+      result += params_->GenJS();
+      result += ")";
+    } else if (name_ == "ln") {
+      result += "Math.log";
+      result += "(";
+      result += params_->GenJS();
+      result += ")";
+    } else if (name_ == "lg") {
+      result += "Math.log10";
+      result += "(";
+      result += params_->GenJS();
+      result += ")";
+    } else if (name_ == "log") {
+      result += "Math.log(";
+      result += (*(params_->exprs_.begin()))->GenJS();
+      result += ",";
+      result += (*(std::next(params_->exprs_.begin(), 1)))->GenJS();
+      result += ")";
+    } else {
+      result += name_;
+      result += "(";
+      result += params_->GenJS();
+      result += ")";
+    }
     return result;
   }
   virtual double EvalVal(Ptr<Vars> v) override {

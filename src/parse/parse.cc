@@ -378,6 +378,7 @@ std::list<Ptr<ASTNode>> Parser::ParseTop() {
 }
 
 std::shared_ptr<RootNode> Parser::Parse() {
+  EnterScope();
   std::list<Ptr<ASTNode>> stmts;
   try {
     stmts = ParseTop();
@@ -385,7 +386,6 @@ std::shared_ptr<RootNode> Parser::Parse() {
     std::cout << "Error at Line " << linenum_ + 1 << " : " << error.what()
               << std::endl;
   }
-  EnterScope();
   Ptr<RootNode> node(new RootNode(stmts));
   node->declvars_ = curscope_.front();
   ExitScope();

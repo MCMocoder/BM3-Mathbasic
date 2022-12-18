@@ -48,7 +48,7 @@ class RootNode : public ASTNode {
     std::cout << depth << ":"
               << "RootNode";
     std::cout << std::endl;
-    for (Ptr<ASTNode> func : defs_) {
+    for (Ptr<DefStmt> func : defs_) {
       func->PrintTree(depth + 1);
     }
     for (Ptr<ASTNode> stmt : stmts_) {
@@ -57,7 +57,11 @@ class RootNode : public ASTNode {
   }
 
   virtual std::string GenJS() override {
-    std::string result = "function run() {";
+    std::string result;
+    for (Ptr<DefStmt> func : defs_) {
+      result += func->GenJS();
+    }
+    result += "function run() {";
     for (std::string varname : declvars_) {
       result += "var " + varname + "=0.0;";
     }

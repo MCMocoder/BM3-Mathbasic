@@ -30,10 +30,13 @@ int main(int argc, char **argv) {
   buf << source.rdbuf();
   std::string sourcecode(buf.str());
   auto t = Compile(sourcecode);
+  if (t == nullptr) {
+    return 514;
+  }
   if (!strcmp(argv[1], "tree")) {
     t->PrintTree(0);
   } else if (!strcmp(argv[1], "js")) {
-    t->GenJS();
+    cout << t->GenJS();
   } else if (!strcmp(argv[1], "run")) {
     t->Eval(nullptr);
   } else if (!strcmp(argv[1], "vm")) {

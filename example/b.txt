@@ -3,6 +3,7 @@ RET a+b
 ENDDEF
 
 INPUT i,j
+p=0
 b=add(i,j)
 PRINT (add(i,j)+3)/7
 IF (i+j)>=5 THEN

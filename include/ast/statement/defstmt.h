@@ -45,6 +45,14 @@ class DefStmt : public ASTNode, std::enable_shared_from_this<DefStmt> {
       i->PrintTree(depth + 1);
     }
   }
+  virtual bool IsArg(string name) {
+    for (auto j : args_) {
+      if (j->name_ == name) {
+        return true;
+      }
+    }
+    return false;
+  }
   virtual std::string GenJS() override {
     std::string result;
     result += "function ";
@@ -54,7 +62,13 @@ class DefStmt : public ASTNode, std::enable_shared_from_this<DefStmt> {
       result += (i->name_ + ",");
     }
     result.erase(result.end() - 1);
+    result += ")";
     result += "{";
+    for (auto i : declvars_) {
+      if (!IsArg(i)) {
+        result += "var " + i + "=0.0;";
+      }
+    }
     for (auto i : stmts_) {
       result += i->GenJS();
     }
