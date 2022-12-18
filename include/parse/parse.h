@@ -90,7 +90,7 @@ class Parser {
   Ptr<WhileStmt> ParseWhileStmt();
   Ptr<DoLoopStmt> ParseDoLoopStmt();
   Ptr<DefStmt> ParseDefStmt();
-  Ptr<CallFuncExpr> ParseCallFuncExpr(std::string& id);
+  Ptr<CallFuncExpr> ParseCallFuncExpr(std::string &id);
   Ptr<RetStmt> ParseRetStmt();
   std::list<Ptr<ASTNode>> ParseTop();
   std::shared_ptr<RootNode> Parse();
@@ -108,11 +108,13 @@ static std::unordered_map<std::string, int /*ParamNum*/> funcmap =
 
 class Sema {
  public:
-  static bool SearchVar(const std::string &varname, const Parser *psr) {
+  static bool SearchVar(const std::string &varname, const Parser *psr,
+                        int linenum) {
     for (const std::unordered_set<std::string> &scope : psr->curscope_) {
       if (scope.count(varname) != 0) {
         if (ToLowerCase(varname) == "paimon") {
-          std::cout << "Ehe Te Nandayo" << std::endl;
+          std::cout << "Warning at Line " << linenum + 1 << ":"
+                    << "Ehe Te Nandayo" << std::endl;
         }
         return true;
       }

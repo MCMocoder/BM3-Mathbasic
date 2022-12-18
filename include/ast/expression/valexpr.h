@@ -130,15 +130,15 @@ class Valexpr : public ASTNode {
   virtual void GenVM(Ptr<Vars> v, vector<Op>& ops) override {
     switch (oper_) {
       case Lexer::ADD:
-        lchild_->GenVM(v,ops);
+        lchild_->GenVM(v, ops);
         rchild_->GenVM(v, ops);
         ops.push_back(Op(OpCode::ADD));
         break;
       case Lexer::SUB:
         if (lchild_.get() == nullptr) {
-          ops.push_back(Op(OpCode::PUSH,0));
+          ops.push_back(Op(OpCode::PUSH, 0));
         } else {
-          lchild_->GenVM(v,ops);
+          lchild_->GenVM(v, ops);
         }
         rchild_->GenVM(v, ops);
         ops.push_back(Op(OpCode::SUB));

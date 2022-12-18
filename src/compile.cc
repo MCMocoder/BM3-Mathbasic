@@ -16,7 +16,6 @@
 #include "lex/lexer.h"
 #include "vm/vm.h"
 
-
 using namespace mocoder;
 
 std::shared_ptr<RootNode> Compile(const std::string &source) {
@@ -27,5 +26,5 @@ std::shared_ptr<RootNode> Compile(const std::string &source) {
   }
   Parser parse(lst);
   std::shared_ptr<RootNode> node = parse.Parse();
-  return parse.success_?node:nullptr;
+  return parse.success_ ? node : nullptr;
 }

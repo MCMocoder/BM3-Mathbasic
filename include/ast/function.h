@@ -16,6 +16,7 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+
 #include "ast/statement/defstmt.h"
 
 namespace mocoder {
@@ -30,9 +31,7 @@ class Funcs {
   Ptr<DefStmt> GetFunc(const std::string& name) {
     return funcs_.find(name)->second;
   }
-  void AddFunc(Ptr<DefStmt> f) {
-    funcs_.insert({f->name_,f});
-  }
+  void AddFunc(Ptr<DefStmt> f) { funcs_.insert({f->name_, f}); }
 };
 
-}
+}  // namespace mocoder

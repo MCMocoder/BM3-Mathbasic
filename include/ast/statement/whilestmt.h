@@ -63,7 +63,7 @@ class WhileStmt : public ASTNode {
     }
   }
   virtual void GenVM(Ptr<Vars> v, vector<Op> &ops) override {
-    int looploc=ops.size();
+    int looploc = ops.size();
     cond_->GenVM(v, ops);
     vector<Op> content;
     for (auto i : stmts_) {

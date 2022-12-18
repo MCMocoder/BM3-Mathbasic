@@ -24,7 +24,7 @@ class Vars {
   std::list<std::unordered_map<std::string, double>> vars_;
   std::list<std::unordered_map<std::string, double>>::iterator scope_end_ =
       vars_.end();
-  double retval_=0.0;
+  double retval_ = 0.0;
   void EnterScope(const std::unordered_set<std::string>& declvars) {
     std::unordered_map<std::string, double> vs;
     for (auto& i : declvars) {

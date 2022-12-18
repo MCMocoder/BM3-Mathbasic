@@ -35,7 +35,7 @@ class Identifier : public Valexpr {
   virtual double EvalVal(Ptr<Vars> v) override { return v->GetVal(name_); }
   virtual void Eval(Ptr<Vars> v) override {}
   virtual void GenVM(Ptr<Vars> v, vector<Op>& ops) override {
-    ops.push_back(Op(OpCode::LOAD,name_));
+    ops.push_back(Op(OpCode::LOAD, name_));
   }
 };
 }  // namespace mocoder

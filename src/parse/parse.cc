@@ -30,7 +30,7 @@ Ptr<Identifier> Parser::ParseIdentifier() {
   Ptr<Identifier> result(new Identifier(curtok_.second));
   ConsumeToken();
 
-  if (!Sema::SearchVar(result->name_, this)) {
+  if (!Sema::SearchVar(result->name_, this, linenum_)) {
     AddVar(result->name_);
   }
 
@@ -84,7 +84,7 @@ Ptr<Valexpr> Parser::ParseIdExpr() {
     // Variable(Identifier)
     Ptr<Identifier> result(new Identifier(id));
 
-    if (!Sema::SearchVar(result->name_, this)) {
+    if (!Sema::SearchVar(result->name_, this, linenum_)) {
       std::__throw_logic_error(
           (std::string("Use of undeclared variable ") + result->name_).c_str());
     }
@@ -113,7 +113,7 @@ std::list<Ptr<Identifier>> Parser::ParseIdentifierList() {
     Ptr<Identifier> curid(new Identifier(curtok_.second));
     ConsumeToken();  // IDENTIFIER
 
-    if (!Sema::SearchVar(curid->name_, this)) {
+    if (!Sema::SearchVar(curid->name_, this, linenum_)) {
       AddVar(curid->name_);
     }
 
@@ -322,7 +322,7 @@ Ptr<DefStmt> Parser::ParseDefStmt() {
   Ptr<DefStmt> result(new DefStmt(nodes, name, ids));
   result->declvars_ = curscope_.front();
   ExitScope();
-  funcmap.emplace(name,ids.size());
+  funcmap.emplace(name, ids.size());
   return result;
 }
 
@@ -363,8 +363,8 @@ std::list<Ptr<ASTNode>> Parser::ParseTop() {
       } else {
         result.push_back(ParseAssignStmt());
       }
-    } catch (std::logic_error& error) {
-      std::cout << "Line " << linenum_ + 1 << " : " << error.what()
+    } catch (std::logic_error error) {
+      std::cout << "Error at Line " << linenum_ + 1 << " : " << error.what()
                 << std::endl;
 
       while (curtok_.first != Lexer::NEWLINE && !eof_) {
@@ -378,7 +378,13 @@ std::list<Ptr<ASTNode>> Parser::ParseTop() {
 }
 
 std::shared_ptr<RootNode> Parser::Parse() {
-  std::list<Ptr<ASTNode>> stmts = ParseTop();
+  std::list<Ptr<ASTNode>> stmts;
+  try {
+    stmts = ParseTop();
+  } catch (std::logic_error error) {
+    std::cout << "Error at Line " << linenum_ + 1 << " : " << error.what()
+              << std::endl;
+  }
   EnterScope();
   Ptr<RootNode> node(new RootNode(stmts));
   node->declvars_ = curscope_.front();

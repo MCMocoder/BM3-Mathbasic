@@ -84,7 +84,7 @@ class VarTable {
 
 class VM {
  public:
-  template<typename T>
+  template <typename T>
   using Ptr = std::shared_ptr<T>;
   vector<Op> main_;
   map<string, vector<Op>> funcs_;

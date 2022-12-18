@@ -68,10 +68,10 @@ class DoLoopStmt : public ASTNode {
   virtual void GenVM(Ptr<Vars> v, vector<Op> &ops) override {
     int jmploc = ops.size();
     for (auto i : stmts_) {
-      i->GenVM(v,ops);
+      i->GenVM(v, ops);
     }
     cond_->GenVM(v, ops);
-    ops.push_back(Op(OpCode::JNZ,jmploc));
+    ops.push_back(Op(OpCode::JNZ, jmploc));
   }
 };
 }  // namespace mocoder

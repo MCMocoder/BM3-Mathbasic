@@ -9,13 +9,14 @@
  *
  */
 
+#include <fstream>
+#include <sstream>
+#include <string>
+
 #include "compile.h"
 #include "lex/lexer.h"
 #include "parse/parse.h"
 #include "vm/vm.h"
-#include <fstream>
-#include <sstream>
-#include <string>
 
 using namespace mocoder;
 using namespace std;
@@ -37,7 +38,7 @@ int main(int argc, char **argv) {
     t->Eval(nullptr);
   } else if (!strcmp(argv[1], "vm")) {
     vector<Op> main;
-    map<string,vector<Op>> func;
+    map<string, vector<Op>> func;
     t->GenRootVM(main, func);
     VM vm;
     vm.main_ = main;

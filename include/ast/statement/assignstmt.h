@@ -47,7 +47,7 @@ class AssignStmt : public ASTNode {
   }
   virtual void GenVM(Ptr<Vars> v, vector<Op>& ops) override {
     expr_->GenVM(v, ops);
-    ops.push_back(Op(OpCode::STORE,var_->name_));
+    ops.push_back(Op(OpCode::STORE, var_->name_));
   }
 };
 }  // namespace mocoder

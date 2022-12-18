@@ -84,12 +84,12 @@ class IfStmt : public ASTNode {
     cond_->GenVM(v, ops);
     vector<Op> iftrue;
     for (auto i : stmts_) {
-      i->GenVM(v,iftrue);
+      i->GenVM(v, iftrue);
     }
     ops.push_back(Op(OpCode::JZ, ops.size() + iftrue.size() + 1));
-    ops.insert(ops.end(),iftrue.begin(),iftrue.end());
+    ops.insert(ops.end(), iftrue.begin(), iftrue.end());
     if (else_ != nullptr) {
-      else_->GenVM(v,ops);
+      else_->GenVM(v, ops);
     }
   }
 };

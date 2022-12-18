@@ -14,7 +14,6 @@
 #include <iostream>
 #include <stdexcept>
 
-
 namespace mocoder {
 
 using Token = Lexer::Token;

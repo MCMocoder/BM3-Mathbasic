@@ -101,7 +101,7 @@ class Condexpr : public ASTNode {
     switch (oper_) {
       case Lexer::GREATEREQUAL:
         lexpr_->GenVM(v, ops);
-        rexpr_->GenVM(v,ops);
+        rexpr_->GenVM(v, ops);
         ops.push_back(OpCode::MOREEQ);
         break;
       case Lexer::GREATER:

@@ -21,7 +21,6 @@
 #include "ast/variable.h"
 #include "vm/vm.h"
 
-
 namespace mocoder {
 
 template <typename T>

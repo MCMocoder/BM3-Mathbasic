@@ -82,7 +82,7 @@ class CallFuncExpr : public Valexpr {
       ops.push_back(Op(OpCode::CALLLG));
     } else if (name_ == "log") {
       (*(params_->exprs_.begin()))->GenVM(v, ops);
-      (*(std::next(params_->exprs_.begin(), 1)))->GenVM(v,ops);
+      (*(std::next(params_->exprs_.begin(), 1)))->GenVM(v, ops);
       ops.push_back(Op(OpCode::CALLLOG));
     } else {
       params_->GenVM(v, ops);

@@ -48,6 +48,9 @@ class RootNode : public ASTNode {
     std::cout << depth << ":"
               << "RootNode";
     std::cout << std::endl;
+    for (Ptr<ASTNode> func : defs_) {
+      func->PrintTree(depth + 1);
+    }
     for (Ptr<ASTNode> stmt : stmts_) {
       stmt->PrintTree(depth + 1);
     }

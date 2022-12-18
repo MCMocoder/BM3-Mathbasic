@@ -45,7 +45,22 @@ class DefStmt : public ASTNode, std::enable_shared_from_this<DefStmt> {
       i->PrintTree(depth + 1);
     }
   }
-  virtual std::string GenJS() override { return ""; }
+  virtual std::string GenJS() override {
+    std::string result;
+    result += "function ";
+    result += name_;
+    result += "(";
+    for (auto i : args_) {
+      result += (i->name_ + ",");
+    }
+    result.erase(result.end() - 1);
+    result += "{";
+    for (auto i : stmts_) {
+      result += i->GenJS();
+    }
+    result += "}";
+    return result;
+  }
 
   virtual void Eval(Ptr<Vars> v) override {}
 
@@ -69,10 +84,10 @@ class DefStmt : public ASTNode, std::enable_shared_from_this<DefStmt> {
 
   virtual void GenVM(Ptr<Vars> v, vector<Op> &ops) override {
     for (auto i = args_.rbegin(); i != args_.rend(); ++i) {
-      ops.push_back(Op(OpCode::STORE,(*i)->name_));
+      ops.push_back(Op(OpCode::STORE, (*i)->name_));
     }
     for (auto i : stmts_) {
-      i->GenVM(v,ops);
+      i->GenVM(v, ops);
     }
   }
 };
