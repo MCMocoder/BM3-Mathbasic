@@ -76,7 +76,7 @@ InputStmt -> INPUT IdentifierList
 PrintStmt -> PRINT ValExprList
 RetStmt -> RET ValExpr
 EndStmt -> END
-DefStmt -> DEF Identifier ( IdentifierList ) Stmts ENDDEF
+DefStmt -> DEF Identifier ( IdentifierList ) NEWLINE Stmts ENDDEF
 AssignStmt -> Identifier = ValExpr
 CondExpr -> ValExpr > ValExpr
            |ValExpr < ValExpr
