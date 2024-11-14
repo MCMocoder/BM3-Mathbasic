@@ -47,7 +47,10 @@ int main(int argc, char **argv) {
     vm.main_ = main;
     vm.funcs_ = func;
     vm.Run();
+  } else if (!strcmp(argv[1], "print")) {
+    t->PrintTree(0);
   } else {
+    
     return 114;
   }
   return 0;
